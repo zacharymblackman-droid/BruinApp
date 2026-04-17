@@ -1,0 +1,1156 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;background:#f7f5f0;color:#1a1a1a;min-height:100vh}
+input,textarea,select{font-family:inherit;font-size:14px;border:1px solid #ccc;border-radius:6px;padding:8px 12px;width:100%;outline:none;background:#fff;color:#1a1a1a}
+input:focus,textarea:focus,select:focus{border-color:#2774AE;box-shadow:0 0 0 3px rgba(39,116,174,0.15)}
+button{cursor:pointer;font-family:inherit;border:none;border-radius:6px;padding:8px 16px;font-size:14px;transition:all 0.15s}
+.btn-primary{background:#2774AE;color:#fff;font-weight:600}
+.btn-primary:hover{background:#1d5c8c}
+.btn-gold{background:#FFD100;color:#162040;font-weight:700}
+.btn-gold:hover{background:#e6bc00}
+.btn-ghost{background:transparent;border:1.5px solid #2774AE;color:#2774AE;font-weight:600}
+.btn-ghost:hover{background:#e8f0f8}
+.btn-danger{background:#c0392b;color:#fff;font-weight:600}
+.btn-danger:hover{background:#a93226}
+.btn-sm{padding:5px 11px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:4px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px}
+.badge-open{background:#d4edda;color:#155724}
+.badge-closed{background:#f8d7da;color:#721c24}
+.badge-pending{background:#fff3cd;color:#856404}
+.badge-accepted{background:#d4edda;color:#155724}
+.badge-rejected{background:#f8d7da;color:#721c24}
+.badge-waitlisted{background:#e2e3e5;color:#383d41}
+.badge-interview{background:#cce5ff;color:#004085}
+.badge-offer{background:#d4edda;color:#155724}
+.card{background:#fff;border-radius:12px;border:1px solid #e0ddd6;padding:20px}
+.sidebar{width:230px;min-width:230px;background:#162040;color:#fff;min-height:100vh;display:flex;flex-direction:column}
+.sidebar-logo{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.sidebar-logo h2{font-size:21px;color:#FFD100;letter-spacing:1px}
+.sidebar-logo p{font-size:11px;color:#8b9bb4;margin-top:2px}
+.sidebar-nav{padding:14px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;color:#b0bdcc;font-size:13px;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:#fff}
+.nav-item.active{background:rgba(39,116,174,0.25);color:#fff;border-left-color:#FFD100}
+.main-content{flex:1;padding:26px;overflow-y:auto;max-height:100vh}
+.page-header{margin-bottom:22px}
+.page-header h1{font-size:24px;color:#162040;font-weight:700}
+.page-header p{color:#666;margin-top:4px;font-size:13px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:22px}
+.stat-card{background:#fff;border-radius:10px;border:1px solid #e0ddd6;padding:14px;text-align:center}
+.stat-card .num{font-size:26px;font-weight:700;color:#2774AE}
+.stat-card .lbl{font-size:11px;color:#888;margin-top:2px}
+.club-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.club-card{background:#fff;border-radius:12px;border:1px solid #e0ddd6;overflow:hidden;transition:box-shadow 0.2s;position:relative}
+.club-card:hover{box-shadow:0 4px 18px rgba(22,32,64,0.12)}
+.club-card-banner{height:6px}
+.club-card-body{padding:14px}
+.club-card-body h3{font-size:14px;font-weight:700;color:#162040}
+.club-card-body .category{font-size:10px;color:#2774AE;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.club-card-body p{font-size:12px;color:#555;line-height:1.5;margin:6px 0}
+.club-card-footer{border-top:1px solid #f0ede8;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;background:#fafaf8;flex-wrap:wrap;gap:6px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;background:#f5f3ee;color:#555;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e0ddd6}
+td{padding:10px 12px;border-bottom:1px solid #f0ede8;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf8}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;padding:26px}
+.modal h2{font-size:18px;margin-bottom:14px;color:#162040}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:#444;margin-bottom:4px}
+.tag{display:inline-block;background:#e8f0f8;color:#2774AE;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;margin:2px}
+.tag-pill{display:inline-flex;align-items:center;gap:4px;background:#e8f0f8;color:#2774AE;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;margin:2px}
+.tag-pill.selected{background:#2774AE;color:#fff}
+.tag-pill.interest{background:#fff3cd;color:#856404}
+.welcome-screen{min-height:100vh;background:linear-gradient(135deg,#162040 0%,#2774AE 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.welcome-card{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+.welcome-logo h1{font-size:30px;color:#162040;letter-spacing:2px;text-align:center}
+.welcome-logo .sub{font-size:12px;color:#2774AE;font-weight:600;letter-spacing:1px;margin-top:2px;text-align:center}
+.role-tabs{display:flex;gap:6px;margin-bottom:18px}
+.role-tab{flex:1;padding:9px;text-align:center;border-radius:8px;border:2px solid #e0ddd6;cursor:pointer;font-size:12px;font-weight:600;color:#666;transition:all 0.15s}
+.role-tab.active{border-color:#2774AE;background:#e8f0f8;color:#2774AE}
+.error-msg{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;padding:9px;border-radius:6px;font-size:12px;margin-bottom:10px}
+.success-msg{background:#f0fdf4;border:1px solid #86efac;color:#166534;padding:9px;border-radius:6px;font-size:12px;margin-bottom:10px}
+.app-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #e0ddd6;border-radius:10px;margin-bottom:8px;background:#fff}
+.divider{border:none;border-top:1px solid #e8e4de;margin:16px 0}
+textarea{resize:vertical;min-height:70px}
+.empty-state{text-align:center;padding:40px 20px;color:#888}
+.empty-state .icon{font-size:36px;margin-bottom:10px}
+.empty-state p{font-size:13px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.save-btn{background:#2774AE;color:#fff;font-weight:600;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:14px}
+.section-title{font-size:13px;font-weight:700;color:#162040;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #e8e4de}
+.star-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:4px;transition:transform 0.1s}
+.star-btn:hover{transform:scale(1.2)}
+.progress-bar-wrap{background:#f0ede8;border-radius:3px;height:6px;overflow:hidden;margin-top:4px}
+.progress-bar-fill{height:100%;border-radius:3px;transition:width 0.3s}
+.copy-box{background:#f5f3ee;border:1px solid #e0ddd6;border-radius:8px;padding:12px;font-size:12px;color:#444;font-family:monospace;word-break:break-all;max-height:100px;overflow-y:auto}
+.tab-row{display:flex;gap:0;border-bottom:2px solid #e0ddd6;margin-bottom:20px}
+.tab-btn{padding:10px 18px;font-size:13px;font-weight:600;color:#888;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;margin-bottom:-2px;transition:all 0.15s}
+.tab-btn.active{color:#2774AE;border-bottom-color:#2774AE}
+.word-count{font-size:10px;color:#aaa;text-align:right;margin-top:2px}
+.word-count.over{color:#dc2626}
+.upload-area{border:2px dashed #ccc;border-radius:8px;padding:20px;text-align:center;cursor:pointer;background:#fafafa;font-size:13px;color:#888}
+.upload-area:hover{border-color:#2774AE;background:#f0f6fc}
+.logo-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
+.recommendation-card{background:linear-gradient(135deg,#e8f0f8,#f5f3ee);border:1px solid #2774AE33;border-radius:12px;padding:16px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const {useState,useEffect,useRef,useCallback}=React;
+const h=React.createElement;
+
+const COLORS=['#2774AE','#8B4513','#1B5E20','#6A1B9A','#BF360C','#006064','#37474F'];
+const CATEGORIES=['Academic','Arts & Culture','Community Service','Greek Life','Political','Pre-Professional','STEM','Sports & Recreation','Social Justice','Religious & Spiritual'];
+const ALL_TAGS=['Pre-Medical','Pre-Law','Consulting','Finance','Business','Research','Leadership','Community','Networking','STEM','Arts','Social Justice','Sports','Service','Cultural'];
+const YEARS=['1st Year','2nd Year','3rd Year','4th Year','2nd Year Transfer','3rd Year Transfer'];
+const GRAD_YEARS=['2025','2026','2027','2028','2029'];
+const OUTCOMES=['accepted','rejected','waitlisted','interview','offer','pending'];
+
+const CLUBS_INIT=[
+  {id:1,name:'Bruin Entrepreneurs',category:'Pre-Professional',desc:'Connect with LA\'s startup ecosystem, pitch competitions, and mentorship from UCLA alumni founders.',open:true,deadline:'2025-05-10',color:COLORS[0],tags:['Business','Networking','Leadership'],logo:'🚀',questions:[{text:'Why are you interested in entrepreneurship?',mandatory:true,wordLimit:200,allowUpload:false},{text:'Describe a project you\'ve built or led.',mandatory:true,wordLimit:250,allowUpload:true},{text:'What do you hope to contribute to our community?',mandatory:false,wordLimit:150,allowUpload:false}],outcomes:['pending','interview','accepted','rejected'],reviewers:['leader@bruinentrepreneurs.com']},
+  {id:2,name:'UCLA Debate Union',category:'Academic',desc:'Competitive parliamentary and policy debate team representing UCLA at national tournaments.',open:true,deadline:'2025-05-15',color:COLORS[2],tags:['Pre-Law','Leadership','Research'],logo:'🎤',questions:[{text:'What debate experience do you have?',mandatory:true,wordLimit:200,allowUpload:false},{text:'Describe a time you changed someone\'s mind.',mandatory:true,wordLimit:200,allowUpload:false},{text:'What resolution topic excites you most?',mandatory:false,wordLimit:100,allowUpload:false}],outcomes:['pending','interview','accepted','rejected'],reviewers:['leader@ucladebate.com']},
+  {id:3,name:'Bruin AI Society',category:'STEM',desc:'Hands-on machine learning projects, research reading groups, and industry speaker panels.',open:true,deadline:'2025-05-20',color:COLORS[3],tags:['STEM','Research','Networking','Pre-Medical'],logo:'🤖',questions:[{text:'What ML experience do you have?',mandatory:true,wordLimit:250,allowUpload:false},{text:'Describe a technical project you\'re proud of.',mandatory:true,wordLimit:300,allowUpload:true},{text:'What area of AI interests you most and why?',mandatory:false,wordLimit:150,allowUpload:false}],outcomes:['pending','interview','accepted','rejected'],reviewers:['leader@bruinai.com']},
+  {id:4,name:'Community Living Project',category:'Community Service',desc:'Weekly volunteering in underserved LA neighborhoods focused on housing and food security.',open:false,deadline:'2025-04-01',color:COLORS[4],tags:['Service','Social Justice','Community'],logo:'🏠',questions:[{text:'Why is community service important to you?',mandatory:true,wordLimit:200,allowUpload:false},{text:'Describe a meaningful volunteer experience.',mandatory:true,wordLimit:250,allowUpload:false}],outcomes:['pending','accepted','rejected'],reviewers:[]},
+  {id:5,name:'Bruin Film Collective',category:'Arts & Culture',desc:'Student-run film production club — from screenwriting workshops to short film festivals.',open:true,deadline:'2025-05-25',color:COLORS[5],tags:['Arts','Cultural','Leadership'],logo:'🎬',questions:[{text:'What role in filmmaking excites you?',mandatory:true,wordLimit:200,allowUpload:false},{text:'Share a film that inspired you.',mandatory:true,wordLimit:150,allowUpload:false},{text:'Describe any creative project you\'ve made.',mandatory:false,wordLimit:200,allowUpload:true}],outcomes:['pending','interview','accepted','rejected'],reviewers:[]},
+  {id:6,name:'Bruin Pre-Law Society',category:'Pre-Professional',desc:'Mock trial, LSAT prep, law school mentorship, and connections to LA\'s legal community.',open:true,deadline:'2025-05-28',color:COLORS[1],tags:['Pre-Law','Consulting','Networking','Leadership'],logo:'⚖️',questions:[{text:'Why are you interested in law?',mandatory:true,wordLimit:250,allowUpload:false},{text:'Describe your strongest argument or advocacy experience.',mandatory:true,wordLimit:200,allowUpload:false}],outcomes:['pending','interview','accepted','rejected','waitlisted'],reviewers:[]},
+];
+
+const APPLICANTS_INIT=[
+  {id:1,name:'Maya Chen',email:'mayachen@g.ucla.edu',year:'2nd Year',major:'Computer Science',uclaGpa:'3.92',hsGpa:'4.0',gradYear:'2027',minors:['Statistics'],major2:''},
+  {id:2,name:'Jordan Davis',email:'jdavis@g.ucla.edu',year:'1st Year',major:'Political Science',uclaGpa:'3.75',hsGpa:'3.9',gradYear:'2028',minors:[],major2:''},
+  {id:3,name:'Aisha Patel',email:'apatel@g.ucla.edu',year:'3rd Year',major:'Economics',uclaGpa:'3.88',hsGpa:'4.0',gradYear:'2026',minors:['Mathematics'],major2:'Statistics'},
+  {id:4,name:'Marcus Wong',email:'mwong@g.ucla.edu',year:'2nd Year',major:'Film Studies',uclaGpa:'3.60',hsGpa:'3.8',gradYear:'2027',minors:[],major2:''},
+  {id:5,name:'Sofia Reyes',email:'sreyes@g.ucla.edu',year:'1st Year',major:'Environmental Science',uclaGpa:'3.45',hsGpa:'3.7',gradYear:'2028',minors:['Spanish'],major2:''},
+  {id:6,name:'David Kim',email:'dkim@g.ucla.edu',year:'2nd Year Transfer',major:'Business Economics',uclaGpa:'3.71',hsGpa:'3.85',gradYear:'2027',minors:[],major2:''},
+];
+
+const APPS_INIT=[
+  {id:1,clubId:1,applicantId:1,status:'pending',submitted:'2025-04-28',answers:['I\'ve been building apps since high school.','Built a meal planning SaaS with 200 users.','I can lead our pitch competition team.'],uploads:[]},
+  {id:2,clubId:2,applicantId:2,status:'accepted',submitted:'2025-04-25',answers:['3 years policy debate, 2 state qualifications.','Convinced my debate partner mid-season.','Excited about AI regulation resolutions.'],uploads:[]},
+  {id:3,clubId:3,applicantId:1,status:'interview',submitted:'2025-04-30',answers:['Completed fast.ai course, built image classifier.','Sentiment analysis tool for Reddit posts.','Reinforcement learning — robotics.'],uploads:[]},
+  {id:4,clubId:1,applicantId:3,status:'rejected',submitted:'2025-04-20',answers:['I want to transition from economics into tech startups.','Led a consulting team for 3 startups.','Financial modeling and market sizing.'],uploads:[]},
+  {id:5,clubId:5,applicantId:4,status:'waitlisted',submitted:'2025-04-22',answers:['Directing and cinematography.','Moonlight.','10-minute short film about LA homelessness.'],uploads:[]},
+  {id:6,clubId:6,applicantId:5,status:'pending',submitted:'2025-05-01',answers:['Climate justice will define our generation.','Organized a petition with 800 signatures.','A tuition-free green energy major.'],uploads:[]},
+  {id:7,clubId:6,applicantId:6,status:'interview',submitted:'2025-04-29',answers:['Passionate about corporate law.','Won a mock trial at community college.'],uploads:[]},
+  {id:8,clubId:1,applicantId:6,status:'pending',submitted:'2025-05-02',answers:['Business background fits entrepreneurship well.','Co-founded a tutoring startup at community college.','Bridge between student founders and the broader community.'],uploads:[]},
+];
+
+const USERS_INIT=[
+  {id:'admin',email:'zach@admin.bruinapp.com',password:'admin123',role:'admin',name:'Zach'},
+  {id:'L1',email:'leader@bruinentrepreneurs.com',password:'leader123',role:'leader',name:'Priya Sharma',clubId:1},
+  {id:'L2',email:'leader@ucladebate.com',password:'leader123',role:'leader',name:'Tyler Kim',clubId:2},
+  {id:'L3',email:'leader@bruinai.com',password:'leader123',role:'leader',name:'Zoe Nguyen',clubId:3},
+  {id:'A1',email:'mayachen@g.ucla.edu',password:'student123',role:'applicant',name:'Maya Chen',applicantId:1},
+  {id:'A2',email:'jdavis@g.ucla.edu',password:'student123',role:'applicant',name:'Jordan Davis',applicantId:2},
+];
+
+function getInitials(name){return(name||'?').split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}
+function getAvatarColor(name){const i=(name||'A').charCodeAt(0)%COLORS.length;return COLORS[i]}
+function fmtDate(d){try{return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}catch{return d}}
+function wordCount(s){return s?s.trim().split(/\s+/).filter(Boolean).length:0}
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0}
+function median(arr){if(!arr.length)return 0;const s=[...arr].sort((a,b)=>a-b);const m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2}
+
+// ─── MAIN APP ──────────────────────────────────────────────────────────────
+function App(){
+  const [user,setUser]=useState(null);
+  const [clubs,setClubs]=useState(CLUBS_INIT);
+  const [applications,setApplications]=useState(APPS_INIT);
+  const [page,setPage]=useState('dashboard');
+  const [modal,setModal]=useState(null);
+  const [savedClubs,setSavedClubs]=useState([]);
+  const [commonApp,setCommonApp]=useState({firstName:'',lastName:'',uclaGpa:'',hsGpa:'',prevGpa:'',prevGpaSource:'',uclaEmail:'',year:'',gradYear:'',major:'',major2:'',minors:[]});
+
+  if(!user)return h(LoginScreen,{onLogin:setUser});
+  const ctx={user,setUser,clubs,setClubs,applications,setApplications,page,setPage,modal,setModal,savedClubs,setSavedClubs,commonApp,setCommonApp};
+  if(user.role==='admin')return h(AdminApp,ctx);
+  if(user.role==='leader')return h(LeaderApp,ctx);
+  return h(ApplicantApp,ctx);
+}
+
+// ─── LOGIN ─────────────────────────────────────────────────────────────────
+function LoginScreen({onLogin}){
+  const [tab,setTab]=useState('applicant');
+  const [email,setEmail]=useState('');
+  const [pw,setPw]=useState('');
+  const [regEmail,setRegEmail]=useState('');
+  const [regName,setRegName]=useState('');
+  const [regPw,setRegPw]=useState('');
+  const [error,setError]=useState('');
+  const [mode,setMode]=useState('login');
+
+  function handleLogin(){
+    setError('');
+    const u=USERS_INIT.find(u=>u.email===email&&u.password===pw);
+    if(!u){setError('Invalid email or password.');return;}
+    if(tab==='applicant'&&u.role!=='applicant'){setError('Not a student account.');return;}
+    if(tab==='leader'&&u.role!=='leader'){setError('Not a club leader account.');return;}
+    if(tab==='admin'&&u.role!=='admin'){setError('Admin credentials required.');return;}
+    onLogin(u);
+  }
+  function handleRegister(){
+    setError('');
+    if(!regName){setError('Name required.');return;}
+    if(!regEmail.endsWith('@g.ucla.edu')&&!regEmail.endsWith('@ucla.edu')){setError('Must use a @g.ucla.edu or @ucla.edu email.');return;}
+    if(regPw.length<6){setError('Password must be 6+ characters.');return;}
+    const newUser={id:'A'+Date.now(),email:regEmail,password:regPw,role:'applicant',name:regName,applicantId:Date.now()};
+    USERS_INIT.push(newUser);
+    onLogin(newUser);
+  }
+  const demos={applicant:'mayachen@g.ucla.edu / student123',leader:'leader@bruinentrepreneurs.com / leader123',admin:'zach@admin.bruinapp.com / admin123'};
+  return h('div',{className:'welcome-screen'},
+    h('div',{className:'welcome-card'},
+      h('div',{className:'welcome-logo',style:{marginBottom:22}},
+        h('h1',null,'BruinApp'),
+        h('div',{className:'sub'},'UCLA CLUB APPLICATIONS'),
+        h('div',{style:{width:40,height:3,background:'#FFD100',margin:'8px auto 0',borderRadius:2}})
+      ),
+      h('div',{className:'role-tabs'},
+        ['applicant','leader','admin'].map(r=>h('div',{key:r,className:'role-tab'+(tab===r?' active':''),onClick:()=>{setTab(r);setError('');setMode('login')}},{applicant:'Student',leader:'Club Leader',admin:'Admin'}[r]))
+      ),
+      tab==='applicant'&&mode==='register'
+        ?h('div',null,
+            h('div',{className:'form-group'},h('label',null,'Full Name'),h('input',{value:regName,onChange:e=>setRegName(e.target.value),placeholder:'Your full name'})),
+            h('div',{className:'form-group'},h('label',null,'UCLA Email'),h('input',{value:regEmail,onChange:e=>setRegEmail(e.target.value),placeholder:'yourname@g.ucla.edu'})),
+            h('div',{className:'form-group'},h('label',null,'Password'),h('input',{type:'password',value:regPw,onChange:e=>setRegPw(e.target.value)})),
+            error&&h('div',{className:'error-msg'},error),
+            h('button',{className:'btn-primary',style:{width:'100%',marginBottom:8},onClick:handleRegister},'Create Account'),
+            h('button',{className:'btn-ghost',style:{width:'100%'},onClick:()=>{setMode('login');setError('')}},'Already have an account? Sign in')
+          )
+        :h('div',null,
+            h('div',{className:'form-group'},h('label',null,'Email'),h('input',{value:email,onChange:e=>setEmail(e.target.value),onKeyDown:e=>e.key==='Enter'&&handleLogin()})),
+            h('div',{className:'form-group'},h('label',null,'Password'),h('input',{type:'password',value:pw,onChange:e=>setPw(e.target.value),onKeyDown:e=>e.key==='Enter'&&handleLogin()})),
+            error&&h('div',{className:'error-msg'},error),
+            h('button',{className:'btn-primary',style:{width:'100%',marginBottom:8},onClick:handleLogin},'Sign In'),
+            tab==='applicant'&&h('button',{className:'btn-ghost',style:{width:'100%'},onClick:()=>{setMode('register');setError('')}},'New student? Create account'),
+            h('div',{style:{marginTop:12,padding:'9px',background:'#f5f3ee',borderRadius:7,fontSize:11,color:'#666'}},h('strong',null,'Demo: '),demos[tab])
+          )
+    )
+  );
+}
+
+// ─── SHELL ─────────────────────────────────────────────────────────────────
+function Shell({user,navItems,page,setPage,setUser,children}){
+  return h('div',{style:{display:'flex',minHeight:'100vh'}},
+    h('div',{className:'sidebar'},
+      h('div',{className:'sidebar-logo'},
+        h('h2',null,'BruinApp'),
+        h('p',null,user.role==='admin'?'Admin Console':user.role==='leader'?'Club Leader':'Student Portal')
+      ),
+      h('nav',{className:'sidebar-nav'},
+        navItems.map(({id,label,icon})=>h('div',{key:id,className:'nav-item'+(page===id?' active':''),onClick:()=>setPage(id)},h('span',{style:{fontSize:15}},icon),h('span',null,label)))
+      ),
+      h('div',{style:{padding:'14px 18px',borderTop:'1px solid rgba(255,255,255,0.1)'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+          h('div',{className:'avatar',style:{background:getAvatarColor(user.name),width:28,height:28,fontSize:10}},getInitials(user.name)),
+          h('div',null,
+            h('div',{style:{fontSize:11,color:'#fff',fontWeight:600}},user.name),
+            h('div',{style:{fontSize:9,color:'#8b9bb4'}},user.email.length>24?user.email.slice(0,24)+'…':user.email)
+          )
+        ),
+        h('button',{onClick:()=>setUser(null),style:{marginTop:8,width:'100%',background:'rgba(255,255,255,0.1)',color:'#b0bdcc',border:'none',borderRadius:6,padding:'5px',fontSize:11,cursor:'pointer'}},'Sign Out')
+      )
+    ),
+    h('div',{style:{flex:1,display:'flex',flexDirection:'column'}},children)
+  );
+}
+
+// ─── APPLICANT APP ─────────────────────────────────────────────────────────
+function ApplicantApp(ctx){
+  const {user,clubs,applications,setApplications,page,setPage,modal,setModal,setUser,savedClubs,setSavedClubs,commonApp,setCommonApp}=ctx;
+  const myApplicant=APPLICANTS_INIT.find(a=>a.id===user.applicantId)||{id:user.applicantId,name:user.name,email:user.email,year:'',major:'',uclaGpa:'',hsGpa:'',gradYear:'',minors:[],major2:''};
+  const myApps=applications.filter(a=>a.applicantId===user.applicantId||a.applicantId===user.id);
+
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:'🏠'},
+    {id:'commonapp',label:'Common App',icon:'📝'},
+    {id:'browse',label:'Browse Clubs',icon:'🔍'},
+    {id:'saved',label:'My List',icon:'⭐'},
+    {id:'myapps',label:'Applications',icon:'📋'},
+  ];
+
+  return h(Shell,{user,navItems:nav,page,setPage,setUser},
+    h('div',{className:'main-content'},
+      page==='dashboard'&&h(ApplicantDashboard,{...ctx,myApplicant,myApps}),
+      page==='commonapp'&&h(CommonAppTab,{commonApp,setCommonApp,myApplicant}),
+      page==='browse'&&h(BrowseClubs,{...ctx,myApps}),
+      page==='saved'&&h(SavedClubs,{...ctx,myApps}),
+      page==='myapps'&&h(MyApplications,{myApps,clubs}),
+      modal&&modal.type==='apply'&&h(ApplicationModal,{...ctx,myApplicant,myApps}),
+      modal&&modal.type==='club-detail'&&h(ClubDetailModal,{...ctx,myApps})
+    )
+  );
+}
+
+function ApplicantDashboard({user,clubs,myApps,savedClubs,setPage,applications,commonApp}){
+  const open=clubs.filter(c=>c.open);
+  const pending=myApps.filter(a=>a.status==='pending').length;
+  const accepted=myApps.filter(a=>a.status==='accepted'||a.status==='offer').length;
+  const interview=myApps.filter(a=>a.status==='interview').length;
+  const profileComplete=commonApp.firstName&&commonApp.uclaEmail&&commonApp.year&&commonApp.major;
+
+  const recommendations=clubs.filter(c=>c.open&&!myApps.find(a=>a.clubId===c.id)).slice(0,3);
+
+  return h('div',null,
+    h('div',{className:'page-header'},
+      h('h1',null,'Welcome back'+(commonApp.firstName?' '+commonApp.firstName:user.name.split(' ')[0]?', '+user.name.split(' ')[0]:'')+' 👋'),
+      h('p',null,'Your BruinApp dashboard for this cycle.')
+    ),
+    !profileComplete&&h('div',{style:{background:'#fff3cd',border:'1px solid #ffc107',borderRadius:10,padding:'12px 16px',marginBottom:18,fontSize:13,display:'flex',justifyContent:'space-between',alignItems:'center'}},
+      h('span',null,'📝 Complete your Common App profile to apply faster'),
+      h('button',{className:'btn-sm btn-gold',onClick:()=>setPage('commonapp')},'Complete Profile')
+    ),
+    h('div',{className:'stat-grid'},
+      h('div',{className:'stat-card'},h('div',{className:'num'},myApps.length),h('div',{className:'lbl'},'Applications')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#f59e0b'}},pending),h('div',{className:'lbl'},'Under Review')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#2563eb'}},interview),h('div',{className:'lbl'},'Interviews')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#16a34a'}},accepted),h('div',{className:'lbl'},'Accepted')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},savedClubs.length),h('div',{className:'lbl'},'Saved Clubs'))
+    ),
+    h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
+      h('div',null,
+        h('h3',{className:'section-title'},'Recent Activity'),
+        myApps.length===0
+          ?h('div',{className:'empty-state',style:{padding:24}},h('div',{className:'icon'},'📋'),h('p',null,'No applications yet.'))
+          :myApps.slice(0,4).map(app=>{
+            const club=clubs.find(c=>c.id===app.clubId);
+            if(!club)return null;
+            const sc={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted','interview':'badge-interview','offer':'badge-offer'};
+            return h('div',{key:app.id,className:'app-row',style:{padding:'10px 12px'}},
+              h('div',{style:{fontSize:20}},club.logo||'📌'),
+              h('div',{style:{flex:1}},h('div',{style:{fontWeight:700,fontSize:13}},club.name),h('div',{style:{fontSize:11,color:'#888'}},fmtDate(app.submitted))),
+              h('span',{className:'badge '+(sc[app.status]||'badge-pending')},app.status.charAt(0).toUpperCase()+app.status.slice(1))
+            );
+          })
+      ),
+      h('div',null,
+        h('h3',{className:'section-title'},'Recommended for You ✨'),
+        recommendations.length===0
+          ?h('div',{className:'empty-state',style:{padding:24}},h('p',null,'No new recommendations.'))
+          :recommendations.map(club=>
+            h('div',{key:club.id,className:'recommendation-card'},
+              h('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:6}},
+                h('span',{style:{fontSize:22}},club.logo),
+                h('div',null,h('div',{style:{fontWeight:700,fontSize:13}},club.name),h('div',{style:{fontSize:11,color:'#666'}},club.category))
+              ),
+              h('div',{style:{fontSize:11,color:'#555',marginBottom:8}},club.tags.map(t=>h('span',{key:t,className:'tag',style:{fontSize:10}},t))),
+              h('div',{style:{fontSize:11,color:'#888'}},'Due '+fmtDate(club.deadline))
+            )
+          )
+      )
+    )
+  );
+}
+
+function CommonAppTab({commonApp,setCommonApp,myApplicant}){
+  const [saved,setSaved]=useState(false);
+  const app={...myApplicant,...commonApp};
+  function update(k,v){setCommonApp(prev=>({...prev,[k]:v}))}
+  function addMinor(){setCommonApp(prev=>({...prev,minors:[...prev.minors,'']}))}
+  function updateMinor(i,v){setCommonApp(prev=>{const m=[...prev.minors];m[i]=v;return{...prev,minors:m}})}
+  function removeMinor(i){setCommonApp(prev=>({...prev,minors:prev.minors.filter((_,j)=>j!==i)}))}
+  function save(){setSaved(true);setTimeout(()=>setSaved(false),2500)}
+
+  return h('div',null,
+    h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:22}},
+      h('div',{className:'page-header',style:{marginBottom:0}},h('h1',null,'Common Application'),h('p',null,'Your profile is shared with all clubs you apply to.')),
+      h('button',{className:'btn-primary',onClick:save,style:{marginTop:4}},saved?'✓ Saved!':'Save Profile')
+    ),
+    saved&&h('div',{className:'success-msg'},'Profile saved successfully.'),
+    h('div',{className:'card',style:{marginBottom:16}},
+      h('div',{className:'section-title'},'Personal Information'),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'First Name *'),h('input',{value:app.firstName||'',onChange:e=>update('firstName',e.target.value),placeholder:'First name'})),
+        h('div',{className:'form-group'},h('label',null,'Last Name *'),h('input',{value:app.lastName||'',onChange:e=>update('lastName',e.target.value),placeholder:'Last name'}))
+      ),
+      h('div',{className:'form-group'},h('label',null,'UCLA Email * (@g.ucla.edu or @ucla.edu)'),h('input',{value:app.uclaEmail||app.email||'',onChange:e=>update('uclaEmail',e.target.value),placeholder:'yourname@g.ucla.edu'})),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'Year *'),h('select',{value:app.year||'',onChange:e=>update('year',e.target.value)},h('option',{value:''},'Select year…'),YEARS.map(y=>h('option',{key:y,value:y},y)))),
+        h('div',{className:'form-group'},h('label',null,'Expected Graduation Year *'),h('select',{value:app.gradYear||'',onChange:e=>update('gradYear',e.target.value)},h('option',{value:''},'Select year…'),GRAD_YEARS.map(y=>h('option',{key:y,value:y},y))))
+      )
+    ),
+    h('div',{className:'card',style:{marginBottom:16}},
+      h('div',{className:'section-title'},'Academic Information'),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'UCLA GPA (Optional)'),h('input',{value:app.uclaGpa||'',onChange:e=>update('uclaGpa',e.target.value),placeholder:'e.g. 3.85'})),
+        h('div',{className:'form-group'},h('label',null,'High School GPA (Optional)'),h('input',{value:app.hsGpa||'',onChange:e=>update('hsGpa',e.target.value),placeholder:'e.g. 4.00'}))
+      ),
+      h('div',{className:'form-group'},h('label',null,'Previous (Transfer) GPA (Optional)'),h('input',{value:app.prevGpa||'',onChange:e=>update('prevGpa',e.target.value),placeholder:'e.g. 3.90'})),
+      app.prevGpa&&h('div',{className:'form-group'},h('label',null,'Previous GPA Source (e.g. Santa Monica College)'),h('input',{value:app.prevGpaSource||'',onChange:e=>update('prevGpaSource',e.target.value),placeholder:'Institution name'}))
+    ),
+    h('div',{className:'card'},
+      h('div',{className:'section-title'},'Academic Program'),
+      h('div',{className:'form-group'},h('label',null,'Primary Major *'),h('input',{value:app.major||'',onChange:e=>update('major',e.target.value),placeholder:'e.g. Computer Science'})),
+      app.major2!==undefined&&h('div',{className:'form-group'},
+        h('label',null,'Second Major (Optional)'),
+        h('div',{style:{display:'flex',gap:8}},
+          h('input',{value:app.major2||'',onChange:e=>update('major2',e.target.value),placeholder:'Second major (optional)'}),
+          app.major2&&h('button',{className:'btn-danger btn-sm',onClick:()=>update('major2','')},'Remove')
+        )
+      ),
+      !app.major2&&h('button',{className:'btn-ghost btn-sm',style:{marginBottom:12},onClick:()=>update('major2',' ')},'+Add Second Major'),
+      h('div',{className:'section-title',style:{marginTop:12}},'Minors'),
+      app.minors.map((m,i)=>
+        h('div',{key:i,style:{display:'flex',gap:8,marginBottom:8}},
+          h('input',{value:m,onChange:e=>updateMinor(i,e.target.value),placeholder:'Minor name'}),
+          h('button',{className:'btn-danger btn-sm',onClick:()=>removeMinor(i)},'Remove')
+        )
+      ),
+      h('button',{className:'btn-ghost btn-sm',onClick:addMinor},'+Add Minor')
+    )
+  );
+}
+
+function BrowseClubs({clubs,applications,setApplications,setModal,savedClubs,setSavedClubs,user,modal,myApplicant,commonApp}){
+  const [search,setSearch]=useState('');
+  const [catFilter,setCatFilter]=useState('All');
+  const [tagFilters,setTagFilters]=useState([]);
+  const [showOpen,setShowOpen]=useState(false);
+
+  function toggleTag(t){setTagFilters(prev=>prev.includes(t)?prev.filter(x=>x!==t):[...prev,t])}
+  function toggleSave(clubId){setSavedClubs(prev=>prev.includes(clubId)?prev.filter(x=>x!==clubId):[...prev,clubId])}
+
+  const filtered=clubs.filter(c=>{
+    const sOk=c.name.toLowerCase().includes(search.toLowerCase())||c.desc.toLowerCase().includes(search.toLowerCase())||c.category.toLowerCase().includes(search.toLowerCase());
+    const cOk=catFilter==='All'||c.category===catFilter;
+    const tOk=tagFilters.length===0||tagFilters.every(t=>c.tags.includes(t));
+    const oOk=!showOpen||c.open;
+    return sOk&&cOk&&tOk&&oOk;
+  });
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Browse Clubs'),h('p',null,clubs.length+' clubs — save and apply from here')),
+    h('div',{style:{display:'flex',gap:10,marginBottom:12}},
+      h('input',{placeholder:'Search clubs, categories, keywords…',value:search,onChange:e=>setSearch(e.target.value),style:{flex:1}}),
+      h('select',{value:catFilter,onChange:e=>setCatFilter(e.target.value),style:{maxWidth:180}},h('option',null,'All'),CATEGORIES.map(c=>h('option',{key:c},c))),
+      h('label',{style:{display:'flex',alignItems:'center',gap:6,fontSize:13,cursor:'pointer',whiteSpace:'nowrap'}},
+        h('input',{type:'checkbox',checked:showOpen,onChange:e=>setShowOpen(e.target.checked)}),'Open only'
+      )
+    ),
+    h('div',{style:{marginBottom:14}},
+      h('div',{style:{fontSize:11,color:'#888',marginBottom:6}},h('strong',null,'Filter by tag:')),
+      h('div',{style:{display:'flex',flexWrap:'wrap',gap:4}},
+        ALL_TAGS.map(t=>h('span',{key:t,className:'tag-pill'+(tagFilters.includes(t)?' selected':''),onClick:()=>toggleTag(t),style:{cursor:'pointer'}},t))
+      )
+    ),
+    h('div',{className:'club-grid'},
+      filtered.map(club=>{
+        const applied=applications.find(a=>a.clubId===club.id&&(a.applicantId===user.applicantId||a.applicantId===user.id));
+        const isSaved=savedClubs.includes(club.id);
+        return h('div',{key:club.id,className:'club-card'},
+          h('div',{className:'club-card-banner',style:{background:club.color}}),
+          h('div',{className:'club-card-body'},
+            h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
+              h('div',null,
+                h('div',{style:{fontSize:24,marginBottom:4}},club.logo),
+                h('div',{className:'category'},club.category),
+                h('h3',null,club.name)
+              ),
+              h('button',{className:'star-btn',onClick:()=>toggleSave(club.id),title:isSaved?'Remove from list':'Save to list'},isSaved?'⭐':'☆')
+            ),
+            h('p',null,club.desc.slice(0,90)+'…'),
+            h('div',{style:{marginTop:6}},club.tags.map(t=>h('span',{key:t,className:'tag',style:{fontSize:10}},t)))
+          ),
+          h('div',{className:'club-card-footer'},
+            h('span',{style:{fontSize:11,color:'#888'}},club.open?'Due '+fmtDate(club.deadline):'Closed'),
+            h('div',{style:{display:'flex',gap:6}},
+              h('button',{className:'btn-ghost btn-sm',onClick:()=>setModal({type:'club-detail',club})},'Details'),
+              applied
+                ?h('span',{className:'badge badge-pending',style:{alignSelf:'center'}},'Applied')
+                :club.open?h('button',{className:'btn-primary btn-sm',onClick:()=>setModal({type:'apply',club})},'Apply')
+                :h('span',{style:{fontSize:11,color:'#aaa'}},'Closed')
+            )
+          )
+        );
+      })
+    ),
+    filtered.length===0&&h('div',{className:'empty-state'},h('div',{className:'icon'},'🔍'),h('p',null,'No clubs match your filters.')),
+    modal&&modal.type==='apply'&&h(ApplicationModal,{clubs,applications,setApplications,setModal,user,myApplicant,commonApp,myApps:applications.filter(a=>a.applicantId===user.applicantId||a.applicantId===user.id)}),
+    modal&&modal.type==='club-detail'&&h(ClubDetailModal,{clubs,applications,setApplications,setModal,user,savedClubs,setSavedClubs,myApplicant,commonApp,myApps:applications.filter(a=>a.applicantId===user.applicantId)})
+  );
+}
+
+function SavedClubs({clubs,savedClubs,setSavedClubs,applications,setApplications,setModal,user,modal,myApplicant,commonApp}){
+  const saved=clubs.filter(c=>savedClubs.includes(c.id));
+  const myApps=applications.filter(a=>a.applicantId===user.applicantId);
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'My Club List ⭐'),h('p',null,'Clubs you\'ve saved — track and apply from here.')),
+    saved.length===0
+      ?h('div',{className:'empty-state'},h('div',{className:'icon'},'⭐'),h('p',null,'No saved clubs yet. Browse clubs and click the ☆ star to save them.'))
+      :saved.map(club=>{
+        const app=myApps.find(a=>a.clubId===club.id);
+        const sc={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted','interview':'badge-interview','offer':'badge-offer'};
+        return h('div',{key:club.id,className:'app-row'},
+          h('div',{style:{fontSize:24,flexShrink:0}},club.logo),
+          h('div',{style:{flex:1}},
+            h('div',{style:{fontWeight:700,fontSize:14}},club.name),
+            h('div',{style:{fontSize:12,color:'#666'}},club.category+' · '+club.tags.slice(0,2).map(t=>h('span',{key:t,className:'tag',style:{fontSize:10}},t))),
+            h('div',{style:{fontSize:11,color:'#888',marginTop:2}},club.open?'Open — Due '+fmtDate(club.deadline):'Applications closed')
+          ),
+          app?h('span',{className:'badge '+(sc[app.status]||'badge-pending'),style:{alignSelf:'center'}},app.status.charAt(0).toUpperCase()+app.status.slice(1))
+            :club.open?h('button',{className:'btn-primary btn-sm',onClick:()=>setModal({type:'apply',club})},'Apply Now')
+            :h('span',{style:{fontSize:11,color:'#aaa'}},'Closed'),
+          h('button',{className:'star-btn',style:{fontSize:15},onClick:()=>setSavedClubs(prev=>prev.filter(x=>x!==club.id))},'✕')
+        );
+      }),
+    modal&&modal.type==='apply'&&h(ApplicationModal,{clubs,applications,setApplications,setModal,user,myApplicant,commonApp,myApps})
+  );
+}
+
+function MyApplications({myApps,clubs}){
+  const sc={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted','interview':'badge-interview','offer':'badge-offer'};
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'My Applications'),h('p',null,'Track the status of all your submissions.')),
+    myApps.length===0
+      ?h('div',{className:'empty-state'},h('div',{className:'icon'},'📋'),h('p',null,'No applications yet.'))
+      :myApps.map(app=>{
+        const club=clubs.find(c=>c.id===app.clubId);
+        if(!club)return null;
+        return h('div',{key:app.id,className:'app-row'},
+          h('div',{style:{fontSize:22}},club.logo),
+          h('div',{style:{flex:1}},
+            h('div',{style:{fontWeight:700,fontSize:14}},club.name),
+            h('div',{style:{fontSize:12,color:'#888'}},club.category+' · Submitted '+fmtDate(app.submitted))
+          ),
+          h('span',{className:'badge '+(sc[app.status]||'badge-pending')},app.status.charAt(0).toUpperCase()+app.status.slice(1))
+        );
+      })
+  );
+}
+
+function ClubDetailModal({modal,setModal,savedClubs,setSavedClubs,applications,setApplications,user,myApplicant,commonApp,myApps}){
+  const club=modal.club;
+  const isSaved=savedClubs&&savedClubs.includes(club.id);
+  const applied=myApps&&myApps.find(a=>a.clubId===club.id);
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:12}},
+          h('div',{style:{fontSize:36}},club.logo),
+          h('div',null,h('h2',{style:{marginBottom:4}},club.name),h('span',{className:'tag'},club.category))
+        ),
+        h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:22,cursor:'pointer',color:'#999'}},'×')
+      ),
+      h('p',{style:{color:'#555',fontSize:14,lineHeight:1.6,marginBottom:12}},club.desc),
+      h('div',{style:{display:'flex',flexWrap:'wrap',gap:4,marginBottom:12}},club.tags.map(t=>h('span',{key:t,className:'tag'},t))),
+      h('div',{style:{display:'flex',gap:16,fontSize:13,color:'#666',marginBottom:16}},
+        h('span',null,'📅 '+fmtDate(club.deadline)),
+        h('span',null,(club.open?'✅ Open':'🔒 Closed'))
+      ),
+      h('div',{className:'section-title'},'Application Questions ('+club.questions.length+')'),
+      club.questions.map((q,i)=>
+        h('div',{key:i,style:{marginBottom:8,padding:'10px',background:'#f5f3ee',borderRadius:8}},
+          h('div',{style:{fontSize:13,fontWeight:600,color:'#162040'}},
+            (i+1)+'. '+q.text,
+            h('span',{style:{marginLeft:6,fontSize:11,color:q.mandatory?'#dc2626':'#888'}},q.mandatory?'Required':'Optional')
+          ),
+          q.wordLimit&&h('div',{style:{fontSize:11,color:'#888',marginTop:2}},'Word limit: '+q.wordLimit),
+          q.allowUpload&&h('div',{style:{fontSize:11,color:'#2774AE',marginTop:2}},'📎 File/link upload allowed')
+        )
+      ),
+      h('div',{style:{display:'flex',gap:10,marginTop:16,justifyContent:'flex-end'}},
+        setSavedClubs&&h('button',{className:'btn-ghost',onClick:()=>{setSavedClubs(prev=>prev.includes(club.id)?prev.filter(x=>x!==club.id):[...prev,club.id]);setModal(null)}},isSaved?'★ Unsave':'☆ Save'),
+        applied
+          ?h('span',{className:'badge badge-pending',style:{alignSelf:'center'}},'Already Applied')
+          :club.open&&h('button',{className:'btn-primary',onClick:()=>setModal({type:'apply',club})},'Apply Now')
+      )
+    )
+  );
+}
+
+function ApplicationModal({modal,setModal,applications,setApplications,user,myApplicant,commonApp,clubs}){
+  const club=modal.club;
+  const [answers,setAnswers]=useState(club.questions.map(()=>''));
+  const [uploads,setUploads]=useState(club.questions.map(()=>''));
+  const [submitted,setSubmitted]=useState(false);
+
+  function submit(){
+    const missing=club.questions.findIndex((q,i)=>q.mandatory&&!answers[i].trim());
+    if(missing>=0){alert('Question '+(missing+1)+' is required.');return;}
+    const over=club.questions.findIndex((q,i)=>q.wordLimit&&wordCount(answers[i])>q.wordLimit);
+    if(over>=0){alert('Question '+(over+1)+' exceeds the word limit of '+club.questions[over].wordLimit+' words.');return;}
+    const newApp={id:Date.now(),clubId:club.id,applicantId:user.applicantId||user.id,status:'pending',submitted:new Date().toISOString().split('T')[0],answers,uploads};
+    setApplications(prev=>[...prev,newApp]);
+    setSubmitted(true);
+  }
+
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      submitted
+        ?h('div',{style:{textAlign:'center',padding:'20px 0'}},h('div',{style:{fontSize:44,marginBottom:10}},'✅'),h('h2',null,'Application Submitted!'),h('p',{style:{color:'#666',marginTop:8,fontSize:14}},'The club will notify you when a decision is made.'),h('button',{className:'btn-primary',style:{marginTop:18},onClick:()=>setModal(null)},'Done'))
+        :h('div',null,
+            h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:14}},
+              h('div',null,h('h2',null,'Apply to '+club.name),h('span',{className:'tag'},club.category)),
+              h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#999'}},'×')
+            ),
+            h('div',{style:{background:'#f5f3ee',borderRadius:8,padding:'10px',fontSize:12,color:'#666',marginBottom:14}},
+              h('strong',null,'Your profile: '),
+              (commonApp.firstName||myApplicant.name||'?')+' · '+(commonApp.year||myApplicant.year||'?')+' · '+(commonApp.major||myApplicant.major||'?')+
+              (commonApp.uclaGpa||myApplicant.uclaGpa?' · GPA: '+(commonApp.uclaGpa||myApplicant.uclaGpa):'')
+            ),
+            club.questions.map((q,i)=>{
+              const wc=wordCount(answers[i]);
+              const over=q.wordLimit&&wc>q.wordLimit;
+              return h('div',{key:i,className:'form-group'},
+                h('label',null,(i+1)+'. '+q.text+' ',h('span',{style:{color:q.mandatory?'#dc2626':'#888',fontSize:11}},q.mandatory?'*Required':'Optional')),
+                h('textarea',{value:answers[i],onChange:e=>{const a=[...answers];a[i]=e.target.value;setAnswers(a)},placeholder:'Your answer…',rows:3,style:{borderColor:over?'#dc2626':undefined}}),
+                q.wordLimit&&h('div',{className:'word-count'+(over?' over':'')},wc+' / '+q.wordLimit+' words'),
+                q.allowUpload&&h('div',{style:{marginTop:6}},
+                  h('input',{value:uploads[i],onChange:e=>{const u=[...uploads];u[i]=e.target.value;setUploads(u)},placeholder:'Paste Google Drive or YouTube link (optional)',style:{fontSize:12}})
+                )
+              );
+            }),
+            h('div',{style:{display:'flex',gap:10,justifyContent:'flex-end',marginTop:10}},
+              h('button',{className:'btn-ghost',onClick:()=>setModal(null)},'Cancel'),
+              h('button',{className:'btn-primary',onClick:submit},'Submit Application')
+            )
+          )
+    )
+  );
+}
+
+// ─── LEADER APP ────────────────────────────────────────────────────────────
+function LeaderApp(ctx){
+  const {user,clubs,setClubs,applications,setApplications,page,setPage,modal,setModal,setUser}=ctx;
+  const myClub=clubs.find(c=>c.id===user.clubId||c.reviewers?.includes(user.email));
+  const myApps=applications.filter(a=>myClub&&a.clubId===myClub.id);
+
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:'🏠'},
+    {id:'applicants',label:'Applicants',icon:'👥'},
+    {id:'analytics',label:'Analytics',icon:'📊'},
+    {id:'email-lists',label:'Email Lists',icon:'📧'},
+    {id:'club-settings',label:'Club Settings',icon:'⚙️'},
+  ];
+
+  return h(Shell,{user,navItems:nav,page,setPage,setUser},
+    h('div',{className:'main-content'},
+      !myClub?h('div',{className:'empty-state'},h('p',null,'No club assigned to your account.')):h('div',null,
+        page==='dashboard'&&h(LeaderDashboard,{myClub,myApps,setPage}),
+        page==='applicants'&&h(LeaderApplicants,{myClub,myApps,applications,setApplications,modal,setModal}),
+        page==='analytics'&&h(LeaderAnalytics,{myClub,myApps}),
+        page==='email-lists'&&h(EmailLists,{myClub,myApps}),
+        page==='club-settings'&&h(ClubSettings2,{myClub,clubs,setClubs,user}),
+        modal&&modal.type==='review'&&h(ReviewModal,{modal,setModal,applications,setApplications,myClub})
+      )
+    )
+  );
+}
+
+function LeaderDashboard({myClub,myApps,setPage}){
+  const counts={};
+  OUTCOMES.forEach(o=>counts[o]=0);
+  myApps.forEach(a=>counts[a.status]=(counts[a.status]||0)+1);
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,myClub.logo+' '+myClub.name),h('p',null,myClub.category+' · '+(myClub.open?'Applications Open':'Closed'))),
+    h('div',{className:'stat-grid'},
+      h('div',{className:'stat-card'},h('div',{className:'num'},myApps.length),h('div',{className:'lbl'},'Total')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#f59e0b'}},counts.pending),h('div',{className:'lbl'},'Pending')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#2563eb'}},counts.interview),h('div',{className:'lbl'},'Interview')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#16a34a'}},counts.accepted+(counts.offer||0)),h('div',{className:'lbl'},'Accepted')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#dc2626'}},counts.rejected),h('div',{className:'lbl'},'Rejected'))
+    ),
+    h('div',{style:{display:'flex',gap:12,flexWrap:'wrap'}},
+      h('button',{className:'btn-primary',onClick:()=>setPage('applicants')},'Review Applicants →'),
+      h('button',{className:'btn-ghost',onClick:()=>setPage('analytics')},'View Analytics'),
+      h('button',{className:'btn-ghost',onClick:()=>setPage('email-lists')},'Export Email Lists')
+    )
+  );
+}
+
+function LeaderApplicants({myClub,myApps,applications,setApplications,modal,setModal}){
+  const [filter,setFilter]=useState('all');
+  const [search,setSearch]=useState('');
+  const filtered=(filter==='all'?myApps:myApps.filter(a=>a.status===filter)).filter(a=>{
+    const ap=APPLICANTS_INIT.find(x=>x.id===a.applicantId)||{name:'',email:''};
+    return ap.name.toLowerCase().includes(search.toLowerCase())||ap.email.toLowerCase().includes(search.toLowerCase());
+  });
+
+  function decide(appId,status){setApplications(prev=>prev.map(a=>a.id===appId?{...a,status}:a))}
+
+  const outcomes=myClub.outcomes||['pending','interview','accepted','rejected'];
+  const sc={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted','interview':'badge-interview','offer':'badge-offer'};
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Applicants'),h('p',null,myApps.length+' submissions')),
+    h('div',{style:{display:'flex',gap:10,marginBottom:14,flexWrap:'wrap'}},
+      h('input',{value:search,onChange:e=>setSearch(e.target.value),placeholder:'Search by name or email…',style:{maxWidth:220}}),
+      h('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},
+        ['all',...outcomes].map(s=>
+          h('button',{key:s,onClick:()=>setFilter(s),style:{padding:'5px 12px',borderRadius:20,border:'1px solid #ccc',background:filter===s?'#2774AE':'#fff',color:filter===s?'#fff':'#555',cursor:'pointer',fontSize:12,fontWeight:600}},
+            s==='all'?'All':s.charAt(0).toUpperCase()+s.slice(1))
+        )
+      )
+    ),
+    filtered.length===0?h('div',{className:'empty-state'},h('div',{className:'icon'},'👥'),h('p',null,'No applicants in this category.'))
+    :h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+        h('table',null,
+          h('thead',null,h('tr',null,h('th',null,'Applicant'),h('th',null,'Year'),h('th',null,'GPA'),h('th',null,'Submitted'),h('th',null,'Status'),h('th',null,'Decide'))),
+          h('tbody',null,
+            filtered.map(app=>{
+              const ap=APPLICANTS_INIT.find(a=>a.id===app.applicantId)||{name:'Unknown',email:'unknown',year:'—',major:'—',uclaGpa:null};
+              return h('tr',{key:app.id},
+                h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(ap.name)}},getInitials(ap.name)),h('div',null,h('div',{style:{fontWeight:600,fontSize:13}},ap.name),h('div',{style:{fontSize:11,color:'#888'}},ap.major)))),
+                h('td',{style:{fontSize:12,color:'#666'}},ap.year),
+                h('td',{style:{fontSize:12}},ap.uclaGpa||'—'),
+                h('td',{style:{fontSize:11,color:'#666'}},fmtDate(app.submitted)),
+                h('td',null,h('span',{className:'badge '+(sc[app.status]||'badge-pending')},app.status.charAt(0).toUpperCase()+app.status.slice(1))),
+                h('td',null,h('div',{style:{display:'flex',gap:4,flexWrap:'wrap'}},
+                  h('button',{className:'btn-ghost btn-xs',onClick:()=>setModal({type:'review',app,applicant:ap})},'Read'),
+                  outcomes.filter(o=>o!=='pending'&&o!==app.status).map(o=>h('button',{key:o,onClick:()=>decide(app.id,o),className:'btn-xs',style:{background:o==='accepted'||o==='offer'?'#d4edda':o==='rejected'?'#f8d7da':o==='interview'?'#cce5ff':'#e2e3e5',color:o==='accepted'||o==='offer'?'#155724':o==='rejected'?'#721c24':o==='interview'?'#004085':'#383d41',border:'none'}},o.charAt(0).toUpperCase()+o.slice(1)))
+                ))
+              );
+            })
+          )
+        )
+    ),
+    modal&&modal.type==='review'&&h(ReviewModal,{modal,setModal,applications,setApplications,myClub})
+  );
+}
+
+function ReviewModal({modal,setModal,applications,setApplications,myClub}){
+  const {app,applicant}=modal;
+  const outcomes=myClub.outcomes||['pending','interview','accepted','rejected'];
+  function decide(status){setApplications(prev=>prev.map(a=>a.id===app.id?{...a,status}:a));setModal(null)}
+  const sc={'pending':'#f59e0b','accepted':'#16a34a','rejected':'#dc2626','interview':'#2563eb','offer':'#16a34a','waitlisted':'#6b7280'};
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}},
+        h('div',null,h('h2',null,applicant.name),h('div',{style:{display:'flex',gap:6,flexWrap:'wrap',marginTop:4}},h('span',{className:'tag'},applicant.email),h('span',{className:'tag'},applicant.major),h('span',{className:'tag'},applicant.year),applicant.uclaGpa&&h('span',{className:'tag'},'GPA: '+applicant.uclaGpa))),
+        h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#999'}},'×')
+      ),
+      h('hr',{style:{border:'none',borderTop:'1px solid #e8e4de',margin:'12px 0'}}),
+      myClub.questions&&myClub.questions.map((q,i)=>
+        h('div',{key:i,style:{marginBottom:14}},
+          h('div',{style:{fontWeight:600,fontSize:13,color:'#162040',marginBottom:4}},q.text),
+          h('div',{style:{fontSize:13,color:'#444',lineHeight:1.6,background:'#f5f3ee',padding:'10px',borderRadius:8}},app.answers[i]||'(no answer)'),
+          app.uploads&&app.uploads[i]&&h('div',{style:{fontSize:12,color:'#2774AE',marginTop:4}},'📎 '+app.uploads[i])
+        )
+      ),
+      h('hr',{style:{border:'none',borderTop:'1px solid #e8e4de',margin:'12px 0'}}),
+      h('div',{style:{display:'flex',gap:8,flexWrap:'wrap',justifyContent:'flex-end'}},
+        outcomes.filter(o=>o!=='pending').map(o=>
+          h('button',{key:o,onClick:()=>decide(o),style:{padding:'8px 16px',borderRadius:6,border:'none',background:sc[o]||'#6b7280',color:'#fff',fontWeight:600,cursor:'pointer',fontSize:13}},
+            o.charAt(0).toUpperCase()+o.slice(1))
+        )
+      )
+    )
+  );
+}
+
+function LeaderAnalytics({myClub,myApps}){
+  const outcomes=myClub.outcomes||['pending','accepted','rejected','interview'];
+  function appsInGroup(status){return myApps.filter(a=>a.status===status).map(a=>APPLICANTS_INIT.find(x=>x.id===a.applicantId)).filter(Boolean)}
+  function gpaArr(apps){return apps.map(a=>parseFloat(a.uclaGpa)).filter(Boolean)}
+  function yearCounts(apps){const c={};apps.forEach(a=>{c[a.year]=(c[a.year]||0)+1});return c}
+  function transferPct(apps){return apps.length?Math.round(apps.filter(a=>a.year&&a.year.includes('Transfer')).length/apps.length*100):0}
+
+  const allAps=myApps.map(a=>APPLICANTS_INIT.find(x=>x.id===a.applicantId)).filter(Boolean);
+  const groups=outcomes.map(o=>({status:o,apps:appsInGroup(o)}));
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Analytics'),h('p',null,'Objective metrics for '+myClub.name+' applicants')),
+    h('div',{className:'card',style:{marginBottom:16}},
+      h('div',{className:'section-title'},'Overall Pool ('+myApps.length+' applicants)'),
+      h('div',{className:'three-col'},
+        h('div',{className:'stat-card'},
+          h('div',{className:'num',style:{fontSize:20}},allAps.length?avg(gpaArr(allAps)).toFixed(2):'—'),
+          h('div',{className:'lbl'},'Avg UCLA GPA')
+        ),
+        h('div',{className:'stat-card'},
+          h('div',{className:'num',style:{fontSize:20}},allAps.length?median(gpaArr(allAps)).toFixed(2):'—'),
+          h('div',{className:'lbl'},'Median UCLA GPA')
+        ),
+        h('div',{className:'stat-card'},
+          h('div',{className:'num',style:{fontSize:20}},transferPct(allAps)+'%'),
+          h('div',{className:'lbl'},'Transfer Students')
+        )
+      )
+    ),
+    h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:14}},
+      groups.map(({status,apps})=>{
+        if(!apps.length)return null;
+        const gpas=gpaArr(apps);
+        const yc=yearCounts(apps);
+        return h('div',{key:status,className:'card'},
+          h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}},
+            h('div',{style:{fontWeight:700,fontSize:14}},status.charAt(0).toUpperCase()+status.slice(1)),
+            h('span',{className:'badge badge-'+status},apps.length+' applicants')
+          ),
+          h('div',{style:{marginBottom:8}},
+            h('div',{style:{fontSize:12,color:'#888',marginBottom:2}},'UCLA GPA'),
+            gpas.length
+              ?h('div',{style:{fontSize:13}},h('span',{style:{marginRight:12}},h('strong',null,'Avg: '),avg(gpas).toFixed(2)),h('span',null,h('strong',null,'Median: '),median(gpas).toFixed(2)))
+              :h('div',{style:{fontSize:12,color:'#aaa'}},'No GPA data')
+          ),
+          h('div',null,
+            h('div',{style:{fontSize:12,color:'#888',marginBottom:4}},'Year Breakdown'),
+            Object.entries(yc).map(([yr,cnt])=>
+              h('div',{key:yr,style:{display:'flex',justifyContent:'space-between',fontSize:12,padding:'2px 0'}},
+                h('span',null,yr),h('span',{style:{fontWeight:600}},cnt+' ('+Math.round(cnt/apps.length*100)+'%)')
+              )
+            )
+          )
+        );
+      })
+    )
+  );
+}
+
+function EmailLists({myClub,myApps}){
+  const [selected,setSelected]=useState('interview');
+  const outcomes=myClub.outcomes||['pending','accepted','rejected','interview'];
+  const apps=myApps.filter(a=>a.status===selected);
+  const emails=apps.map(a=>{const ap=APPLICANTS_INIT.find(x=>x.id===a.applicantId);return ap?ap.email:null}).filter(Boolean);
+  const [copied,setCopied]=useState(false);
+
+  function copy(){
+    try{navigator.clipboard.writeText(emails.join(', ')).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)});}
+    catch{setCopied(true);setTimeout(()=>setCopied(false),2000);}
+  }
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Email Lists'),h('p',null,'Aggregate emails by decision category for bulk outreach.')),
+    h('div',{style:{display:'flex',gap:8,marginBottom:18,flexWrap:'wrap'}},
+      outcomes.map(o=>
+        h('button',{key:o,onClick:()=>setSelected(o),style:{padding:'7px 16px',borderRadius:20,border:'1.5px solid #ccc',background:selected===o?'#2774AE':'#fff',color:selected===o?'#fff':'#555',cursor:'pointer',fontSize:13,fontWeight:600}},
+          o.charAt(0).toUpperCase()+o.slice(1)+' ('+myApps.filter(a=>a.status===o).length+')')
+      )
+    ),
+    h('div',{className:'card'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}},
+        h('div',{style:{fontWeight:700,fontSize:14}},emails.length+' email'+(emails.length!==1?'s':'')+" in '"+selected+"'"),
+        emails.length>0&&h('button',{className:'btn-primary btn-sm',onClick:copy},copied?'✓ Copied!':'Copy All Emails')
+      ),
+      emails.length===0
+        ?h('div',{className:'empty-state',style:{padding:24}},h('p',null,'No applicants in this category.'))
+        :h('div',null,
+            h('div',{className:'copy-box'},emails.join(', ')),
+            h('div',{style:{marginTop:14}},
+              h('div',{className:'section-title'},'Applicant Details'),
+              apps.map(app=>{
+                const ap=APPLICANTS_INIT.find(x=>x.id===app.applicantId)||{name:'Unknown',email:'',year:'',major:''};
+                return h('div',{key:app.id,style:{display:'flex',alignItems:'center',gap:10,padding:'8px 0',borderBottom:'1px solid #f0ede8'}},
+                  h('div',{className:'avatar',style:{background:getAvatarColor(ap.name),width:28,height:28,fontSize:10}},getInitials(ap.name)),
+                  h('div',{style:{flex:1}},h('div',{style:{fontSize:13,fontWeight:600}},ap.name),h('div',{style:{fontSize:11,color:'#888'}},ap.email)),
+                  h('div',{style:{fontSize:11,color:'#666'}},ap.year)
+                );
+              })
+            )
+          )
+    )
+  );
+}
+
+function ClubSettings2({myClub,clubs,setClubs,user}){
+  const [club,setClub]=useState(JSON.parse(JSON.stringify(myClub)));
+  const [saved,setSaved]=useState(false);
+  const [newReviewer,setNewReviewer]=useState('');
+  const [tab,setTab]=useState('general');
+
+  function save(){setClubs(prev=>prev.map(c=>c.id===club.id?club:c));setSaved(true);setTimeout(()=>setSaved(false),2000)}
+  function addQuestion(){setClub({...club,questions:[...club.questions,{text:'',mandatory:true,wordLimit:200,allowUpload:false}]})}
+  function updateQ(i,k,v){const qs=[...club.questions];qs[i]={...qs[i],[k]:v};setClub({...club,questions:qs})}
+  function removeQ(i){setClub({...club,questions:club.questions.filter((_,j)=>j!==i)})}
+  function addReviewer(){if(newReviewer&&!club.reviewers.includes(newReviewer)){setClub({...club,reviewers:[...club.reviewers,newReviewer]});setNewReviewer('')}}
+  function toggleTag(t){const ts=club.tags.includes(t)?club.tags.filter(x=>x!==t):[...club.tags,t];setClub({...club,tags:ts})}
+  function toggleOutcome(o){const os=club.outcomes.includes(o)?club.outcomes.filter(x=>x!==o):[...club.outcomes,o];setClub({...club,outcomes:os})}
+
+  return h('div',null,
+    h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}},
+      h('div',{className:'page-header',style:{marginBottom:0}},h('h1',null,'Club Settings'),h('p',null,'Manage your club profile and application')),
+      h('button',{className:'btn-primary',onClick:save},saved?'✓ Saved!':'Save All Changes')
+    ),
+    saved&&h('div',{className:'success-msg'},'Settings saved successfully.'),
+    h('div',{className:'tab-row'},
+      [['general','General'],['questions','Questions'],['outcomes','Outcomes'],['team','Team & Tags']].map(([id,label])=>
+        h('button',{key:id,className:'tab-btn'+(tab===id?' active':''),onClick:()=>setTab(id)},label)
+      )
+    ),
+    tab==='general'&&h('div',null,
+      h('div',{className:'card',style:{marginBottom:14}},
+        h('div',{className:'section-title'},'Club Identity'),
+        h('div',{className:'form-group'},h('label',null,'Logo / Emoji'),
+          h('div',{style:{display:'flex',gap:10,alignItems:'center'}},
+            h('div',{style:{fontSize:36}},club.logo),
+            h('input',{value:club.logo,onChange:e=>setClub({...club,logo:e.target.value}),style:{maxWidth:80},placeholder:'Emoji'}),
+            h('div',{style:{fontSize:12,color:'#888'}},'Use any emoji as your club logo')
+          )
+        ),
+        h('div',{className:'form-group'},h('label',null,'Club Name'),h('input',{value:club.name,onChange:e=>setClub({...club,name:e.target.value})})),
+        h('div',{className:'form-group'},h('label',null,'Category'),h('select',{value:club.category,onChange:e=>setClub({...club,category:e.target.value})},CATEGORIES.map(c=>h('option',{key:c},c)))),
+        h('div',{className:'form-group'},h('label',null,'Description'),h('textarea',{value:club.desc,onChange:e=>setClub({...club,desc:e.target.value}),rows:3})),
+        h('div',{className:'two-col'},
+          h('div',{className:'form-group'},h('label',null,'Deadline'),h('input',{type:'date',value:club.deadline,onChange:e=>setClub({...club,deadline:e.target.value})})),
+          h('div',{className:'form-group'},h('label',null,'Status'),h('select',{value:club.open?'open':'closed',onChange:e=>setClub({...club,open:e.target.value==='open'})},h('option',{value:'open'},'Open'),h('option',{value:'closed'},'Closed')))
+        )
+      )
+    ),
+    tab==='questions'&&h('div',null,
+      h('div',{className:'card'},
+        h('div',{className:'section-title'},'Application Questions'),
+        club.questions.map((q,i)=>
+          h('div',{key:i,style:{border:'1px solid #e0ddd6',borderRadius:10,padding:'14px',marginBottom:12,background:'#fafaf8'}},
+            h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}},
+              h('div',{style:{fontWeight:600,fontSize:13,color:'#162040'}},'Question '+(i+1)),
+              club.questions.length>1&&h('button',{onClick:()=>removeQ(i),style:{background:'#fee2e2',color:'#dc2626',border:'none',borderRadius:6,padding:'3px 10px',cursor:'pointer',fontSize:12}},'Remove')
+            ),
+            h('div',{className:'form-group'},h('label',null,'Question Text'),h('input',{value:q.text,onChange:e=>updateQ(i,'text',e.target.value)})),
+            h('div',{className:'three-col',style:{marginTop:8}},
+              h('div',{className:'form-group'},h('label',null,'Word Limit'),h('input',{type:'number',value:q.wordLimit||'',onChange:e=>updateQ(i,'wordLimit',parseInt(e.target.value)||0),placeholder:'No limit'})),
+              h('div',{className:'form-group'},h('label',null,'Required?'),h('select',{value:q.mandatory?'yes':'no',onChange:e=>updateQ(i,'mandatory',e.target.value==='yes')},h('option',{value:'yes'},'Mandatory'),h('option',{value:'no'},'Optional'))),
+              h('div',{className:'form-group'},h('label',null,'Allow Upload?'),h('select',{value:q.allowUpload?'yes':'no',onChange:e=>updateQ(i,'allowUpload',e.target.value==='yes')},h('option',{value:'no'},'No'),h('option',{value:'yes'},'Yes (PDF/Drive/YouTube)')))
+            )
+          )
+        ),
+        h('button',{className:'btn-ghost btn-sm',onClick:addQuestion},'+Add Question')
+      )
+    ),
+    tab==='outcomes'&&h('div',null,
+      h('div',{className:'card'},
+        h('div',{className:'section-title'},'Decision Outcomes'),
+        h('p',{style:{fontSize:13,color:'#666',marginBottom:14}},'Choose which outcome options your reviewers can assign. "Pending" is always included.'),
+        h('div',{style:{display:'flex',flexWrap:'wrap',gap:10}},
+          ['interview','accepted','rejected','waitlisted','offer'].map(o=>{
+            const checked=club.outcomes.includes(o);
+            const colors={interview:'#cce5ff',accepted:'#d4edda',rejected:'#f8d7da',waitlisted:'#e2e3e5',offer:'#d4edda'};
+            return h('label',{key:o,style:{display:'flex',alignItems:'center',gap:8,padding:'10px 16px',borderRadius:10,border:'2px solid '+(checked?'#2774AE':'#e0ddd6'),background:checked?colors[o]:'#fff',cursor:'pointer',fontSize:13,fontWeight:600}},
+              h('input',{type:'checkbox',checked,onChange:()=>toggleOutcome(o)}),
+              o.charAt(0).toUpperCase()+o.slice(1)
+            );
+          })
+        ),
+        h('div',{style:{marginTop:16,padding:'12px',background:'#f5f3ee',borderRadius:8,fontSize:12,color:'#666'}},
+          h('strong',null,'Active outcomes: '),['pending',...club.outcomes].join(', ')
+        )
+      )
+    ),
+    tab==='team'&&h('div',null,
+      h('div',{className:'card',style:{marginBottom:14}},
+        h('div',{className:'section-title'},'Tags (for search)'),
+        h('p',{style:{fontSize:12,color:'#666',marginBottom:10}},'Select all tags that apply. These help students find your club.'),
+        h('div',{style:{display:'flex',flexWrap:'wrap',gap:6}},
+          ALL_TAGS.map(t=>h('span',{key:t,className:'tag-pill'+(club.tags.includes(t)?' selected':''),onClick:()=>toggleTag(t),style:{cursor:'pointer'}},t))
+        )
+      ),
+      h('div',{className:'card'},
+        h('div',{className:'section-title'},'Shared Reviewers'),
+        h('p',{style:{fontSize:12,color:'#666',marginBottom:10}},'Add co-leaders or members who can review applications.'),
+        club.reviewers.map((r,i)=>
+          h('div',{key:i,style:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid #f0ede8'}},
+            h('span',{style:{fontSize:13}},r),
+            r!==user.email&&h('button',{onClick:()=>setClub({...club,reviewers:club.reviewers.filter((_,j)=>j!==i)}),style:{background:'#fee2e2',color:'#dc2626',border:'none',borderRadius:4,padding:'2px 8px',cursor:'pointer',fontSize:11}},'Remove')
+          )
+        ),
+        h('div',{style:{display:'flex',gap:8,marginTop:10}},
+          h('input',{value:newReviewer,onChange:e=>setNewReviewer(e.target.value),placeholder:'Reviewer email address',style:{flex:1}}),
+          h('button',{className:'btn-primary btn-sm',onClick:addReviewer},'+Add')
+        )
+      )
+    )
+  );
+}
+
+// ─── ADMIN APP ─────────────────────────────────────────────────────────────
+function AdminApp({user,clubs,setClubs,applications,setApplications,page,setPage,modal,setModal,setUser}){
+  const nav=[
+    {id:'dashboard',label:'Overview',icon:'📊'},
+    {id:'clubs',label:'Manage Clubs',icon:'🏛️'},
+    {id:'users',label:'Users',icon:'👤'},
+    {id:'applications',label:'All Applications',icon:'📋'},
+  ];
+  return h(Shell,{user,navItems:nav,page,setPage,setUser},
+    h('div',{className:'main-content'},
+      page==='dashboard'&&h(AdminDashboard,{clubs,applications}),
+      page==='clubs'&&h(AdminClubs,{clubs,setClubs,modal,setModal}),
+      page==='users'&&h(AdminUsers),
+      page==='applications'&&h(AdminApplications,{applications,setApplications,clubs}),
+      modal&&modal.type==='new-club'&&h(NewClubModal,{setModal,setClubs,clubs})
+    )
+  );
+}
+
+function AdminDashboard({clubs,applications}){
+  const openClubs=clubs.filter(c=>c.open).length;
+  const catCounts={};clubs.forEach(c=>catCounts[c.category]=(catCounts[c.category]||0)+1);
+  const sCounts={};OUTCOMES.forEach(o=>sCounts[o]=0);applications.forEach(a=>sCounts[a.status]=(sCounts[a.status]||0)+1);
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Admin Overview'),h('p',null,'Full platform metrics')),
+    h('div',{className:'stat-grid'},
+      h('div',{className:'stat-card'},h('div',{className:'num'},clubs.length),h('div',{className:'lbl'},'Clubs')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},openClubs),h('div',{className:'lbl'},'Open')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},applications.length),h('div',{className:'lbl'},'Applications')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#f59e0b'}},sCounts.pending),h('div',{className:'lbl'},'Pending')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#16a34a'}},sCounts.accepted+(sCounts.offer||0)),h('div',{className:'lbl'},'Accepted')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#2563eb'}},sCounts.interview),h('div',{className:'lbl'},'Interview')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},USERS_INIT.filter(u=>u.role==='applicant').length),h('div',{className:'lbl'},'Students'))
+    ),
+    h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}},
+      h('div',{className:'card'},
+        h('div',{className:'section-title'},'Clubs by Category'),
+        Object.entries(catCounts).map(([cat,count])=>
+          h('div',{key:cat,style:{display:'flex',justifyContent:'space-between',padding:'5px 0',borderBottom:'1px solid #f0ede8',fontSize:13}},h('span',null,cat),h('span',{style:{fontWeight:700,color:'#2774AE'}},count))
+        )
+      ),
+      h('div',{className:'card'},
+        h('div',{className:'section-title'},'Application Breakdown'),
+        OUTCOMES.map(s=>{
+          const cnt=applications.filter(a=>a.status===s).length;
+          const pct=applications.length?Math.round(cnt/applications.length*100):0;
+          const colors={pending:'#f59e0b',accepted:'#16a34a',rejected:'#dc2626',waitlisted:'#6b7280',interview:'#2563eb',offer:'#16a34a'};
+          return h('div',{key:s,style:{marginBottom:8}},
+            h('div',{style:{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:2}},h('span',null,s.charAt(0).toUpperCase()+s.slice(1)),h('span',null,cnt+' ('+pct+'%)')),
+            h('div',{className:'progress-bar-wrap'},h('div',{className:'progress-bar-fill',style:{width:pct+'%',background:colors[s]||'#999'}}))
+          );
+        })
+      )
+    )
+  );
+}
+
+function AdminClubs({clubs,setClubs,modal,setModal}){
+  function toggleOpen(id){setClubs(prev=>prev.map(c=>c.id===id?{...c,open:!c.open}:c))}
+  function del(id){if(confirm('Delete this club?'))setClubs(prev=>prev.filter(c=>c.id!==id))}
+  return h('div',null,
+    h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:22}},
+      h('div',{className:'page-header',style:{marginBottom:0}},h('h1',null,'Manage Clubs'),h('p',null,clubs.length+' clubs registered')),
+      h('button',{className:'btn-primary',onClick:()=>setModal({type:'new-club'})},'+Add Club')
+    ),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Club'),h('th',null,'Tags'),h('th',null,'Status'),h('th',null,'Deadline'),h('th',null,'Actions'))),
+        h('tbody',null,
+          clubs.map(club=>h('tr',{key:club.id},
+            h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('span',{style:{fontSize:18}},club.logo),h('div',null,h('div',{style:{fontWeight:600,fontSize:13}},club.name),h('div',{style:{fontSize:11,color:'#888'}},club.category)))),
+            h('td',null,club.tags.slice(0,2).map(t=>h('span',{key:t,className:'tag',style:{fontSize:10}},t))),
+            h('td',null,h('span',{className:'badge '+(club.open?'badge-open':'badge-closed')},club.open?'Open':'Closed')),
+            h('td',{style:{fontSize:12,color:'#666'}},fmtDate(club.deadline)),
+            h('td',null,h('div',{style:{display:'flex',gap:6}},
+              h('button',{className:'btn-ghost btn-sm',onClick:()=>toggleOpen(club.id)},club.open?'Close':'Open'),
+              h('button',{className:'btn-danger btn-sm',onClick:()=>del(club.id)},'Delete')
+            ))
+          ))
+        )
+      )
+    ),
+    modal&&modal.type==='new-club'&&h(NewClubModal,{setModal,setClubs,clubs})
+  );
+}
+
+function NewClubModal({setModal,setClubs,clubs}){
+  const [form,setForm]=useState({name:'',category:CATEGORIES[0],desc:'',deadline:'',open:true,logo:'📌',tags:[],questions:[{text:'',mandatory:true,wordLimit:200,allowUpload:false}],outcomes:['interview','accepted','rejected'],reviewers:[]});
+  function save(){
+    if(!form.name||!form.deadline||!form.desc){alert('Fill required fields.');return;}
+    setClubs(prev=>[...prev,{...form,id:Date.now(),color:COLORS[clubs.length%COLORS.length]}]);
+    setModal(null);
+  }
+  function toggleTag(t){const ts=form.tags.includes(t)?form.tags.filter(x=>x!==t):[...form.tags,t];setForm({...form,tags:ts})}
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}},
+        h('h2',null,'Add New Club'),
+        h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#999'}},'×')
+      ),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'Club Name *'),h('input',{value:form.name,onChange:e=>setForm({...form,name:e.target.value})})),
+        h('div',{className:'form-group'},h('label',null,'Logo Emoji'),h('input',{value:form.logo,onChange:e=>setForm({...form,logo:e.target.value}),style:{maxWidth:80}}))
+      ),
+      h('div',{className:'form-group'},h('label',null,'Category'),h('select',{value:form.category,onChange:e=>setForm({...form,category:e.target.value})},CATEGORIES.map(c=>h('option',{key:c},c)))),
+      h('div',{className:'form-group'},h('label',null,'Description *'),h('textarea',{value:form.desc,onChange:e=>setForm({...form,desc:e.target.value}),rows:2})),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'Deadline *'),h('input',{type:'date',value:form.deadline,onChange:e=>setForm({...form,deadline:e.target.value})})),
+        h('div',{className:'form-group'},h('label',null,'Status'),h('select',{value:form.open?'open':'closed',onChange:e=>setForm({...form,open:e.target.value==='open'})},h('option',{value:'open'},'Open'),h('option',{value:'closed'},'Closed')))
+      ),
+      h('div',{className:'form-group'},h('label',null,'Tags'),h('div',{style:{display:'flex',flexWrap:'wrap',gap:4,marginTop:4}},ALL_TAGS.map(t=>h('span',{key:t,className:'tag-pill'+(form.tags.includes(t)?' selected':''),onClick:()=>toggleTag(t),style:{cursor:'pointer',fontSize:11}},t)))),
+      h('div',{style:{display:'flex',gap:10,justifyContent:'flex-end',marginTop:14}},
+        h('button',{className:'btn-ghost',onClick:()=>setModal(null)},'Cancel'),
+        h('button',{className:'btn-primary',onClick:save},'Create Club')
+      )
+    )
+  );
+}
+
+function AdminUsers(){
+  const leaders=USERS_INIT.filter(u=>u.role==='leader');
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Users'),h('p',null,'All platform accounts')),
+    h('h3',{className:'section-title'},'Club Leaders'),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden',marginBottom:20}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Leader'),h('th',null,'Email'),h('th',null,'Club'))),
+        h('tbody',null,leaders.map(u=>h('tr',{key:u.id},
+          h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(u.name)}},getInitials(u.name)),h('span',{style:{fontWeight:600,fontSize:13}},u.name))),
+          h('td',{style:{fontSize:12,color:'#666'}},u.email),
+          h('td',null,h('span',{className:'tag'},CLUBS_INIT.find(c=>c.id===u.clubId)?.name||'Unassigned'))
+        )))
+      )
+    ),
+    h('h3',{className:'section-title'},'Student Applicants'),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Student'),h('th',null,'Email'),h('th',null,'Year'),h('th',null,'Major'),h('th',null,'UCLA GPA'))),
+        h('tbody',null,APPLICANTS_INIT.map((ap,i)=>h('tr',{key:i},
+          h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(ap.name),width:28,height:28,fontSize:10}},getInitials(ap.name)),h('span',{style:{fontWeight:600,fontSize:13}},ap.name))),
+          h('td',{style:{fontSize:12,color:'#666'}},ap.email),
+          h('td',{style:{fontSize:12}},ap.year),
+          h('td',{style:{fontSize:12}},ap.major+(ap.major2?' / '+ap.major2:'')),
+          h('td',{style:{fontSize:12,fontWeight:600,color:'#2774AE'}},ap.uclaGpa||'—')
+        )))
+      )
+    )
+  );
+}
+
+function AdminApplications({applications,setApplications,clubs}){
+  const [cf,setCf]=useState('all');
+  const [sf,setSf]=useState('all');
+  const filtered=applications.filter(a=>(cf==='all'||a.clubId===parseInt(cf))&&(sf==='all'||a.status===sf));
+  function override(id,status){setApplications(prev=>prev.map(a=>a.id===id?{...a,status}:a))}
+  const sc={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted','interview':'badge-interview','offer':'badge-offer'};
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'All Applications'),h('p',null,applications.length+' across all clubs')),
+    h('div',{style:{display:'flex',gap:10,marginBottom:16}},
+      h('select',{value:cf,onChange:e=>setCf(e.target.value),style:{maxWidth:200}},h('option',{value:'all'},'All Clubs'),clubs.map(c=>h('option',{key:c.id,value:c.id},c.logo+' '+c.name))),
+      h('select',{value:sf,onChange:e=>setSf(e.target.value),style:{maxWidth:160}},h('option',{value:'all'},'All Statuses'),OUTCOMES.map(s=>h('option',{key:s,value:s},s.charAt(0).toUpperCase()+s.slice(1))))
+    ),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Applicant'),h('th',null,'Club'),h('th',null,'GPA'),h('th',null,'Date'),h('th',null,'Status'),h('th',null,'Override'))),
+        h('tbody',null,
+          filtered.map(app=>{
+            const ap=APPLICANTS_INIT.find(a=>a.id===app.applicantId)||{name:'Unknown',email:'',uclaGpa:null};
+            const club=clubs.find(c=>c.id===app.clubId)||{name:'Unknown',logo:'📌'};
+            return h('tr',{key:app.id},
+              h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(ap.name),width:26,height:26,fontSize:9}},getInitials(ap.name)),h('div',{style:{fontWeight:600,fontSize:13}},ap.name))),
+              h('td',{style:{fontSize:12}},club.logo+' '+club.name),
+              h('td',{style:{fontSize:12,color:'#2774AE',fontWeight:600}},ap.uclaGpa||'—'),
+              h('td',{style:{fontSize:11,color:'#888'}},fmtDate(app.submitted)),
+              h('td',null,h('span',{className:'badge '+(sc[app.status]||'badge-pending')},app.status.charAt(0).toUpperCase()+app.status.slice(1))),
+              h('td',null,h('select',{value:app.status,onChange:e=>override(app.id,e.target.value),style:{padding:'3px 6px',fontSize:11,width:'auto'}},OUTCOMES.map(s=>h('option',{key:s,value:s},s.charAt(0).toUpperCase()+s.slice(1)))))
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(h(App));
+</script>
+</body>
+</html>
