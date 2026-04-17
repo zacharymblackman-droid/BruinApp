@@ -1,0 +1,849 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Georgia',serif;background:#f7f5f0;color:#1a1a1a;min-height:100vh}
+  input,textarea,select{font-family:inherit;font-size:14px;border:1px solid #ccc;border-radius:6px;padding:8px 12px;width:100%;outline:none;background:#fff}
+  input:focus,textarea:focus,select:focus{border-color:#2774AE;box-shadow:0 0 0 3px rgba(39,116,174,0.15)}
+  button{cursor:pointer;font-family:inherit;border:none;border-radius:6px;padding:8px 16px;font-size:14px;transition:all 0.15s}
+  .btn-primary{background:#2774AE;color:#fff;font-weight:600}
+  .btn-primary:hover{background:#1d5c8c}
+  .btn-ghost{background:transparent;border:1.5px solid #2774AE;color:#2774AE;font-weight:600}
+  .btn-ghost:hover{background:#e8f0f8}
+  .btn-danger{background:#c0392b;color:#fff;font-weight:600}
+  .btn-danger:hover{background:#a93226}
+  .btn-sm{padding:5px 11px;font-size:12px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px}
+  .badge-open{background:#d4edda;color:#155724}
+  .badge-closed{background:#f8d7da;color:#721c24}
+  .badge-pending{background:#fff3cd;color:#856404}
+  .badge-accepted{background:#d4edda;color:#155724}
+  .badge-rejected{background:#f8d7da;color:#721c24}
+  .badge-waitlisted{background:#e2e3e5;color:#383d41}
+  .card{background:#fff;border-radius:12px;border:1px solid #e0ddd6;padding:20px}
+  .sidebar{width:220px;min-width:220px;background:#162040;color:#fff;min-height:100vh;padding:0;display:flex;flex-direction:column}
+  .sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.1)}
+  .sidebar-logo h2{font-size:20px;color:#FFD100;letter-spacing:1px}
+  .sidebar-logo p{font-size:11px;color:#8b9bb4;margin-top:2px}
+  .sidebar-nav{padding:16px 0;flex:1}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:#b0bdcc;font-size:14px;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent}
+  .nav-item:hover{background:rgba(255,255,255,0.07);color:#fff}
+  .nav-item.active{background:rgba(39,116,174,0.25);color:#fff;border-left-color:#FFD100}
+  .main-content{flex:1;padding:28px;overflow-y:auto;max-height:100vh}
+  .page-header{margin-bottom:24px}
+  .page-header h1{font-size:26px;color:#162040;font-weight:700}
+  .page-header p{color:#666;margin-top:4px;font-size:14px}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px}
+  .stat-card{background:#fff;border-radius:10px;border:1px solid #e0ddd6;padding:16px;text-align:center}
+  .stat-card .num{font-size:28px;font-weight:700;color:#2774AE}
+  .stat-card .lbl{font-size:12px;color:#888;margin-top:2px}
+  .club-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .club-card{background:#fff;border-radius:12px;border:1px solid #e0ddd6;overflow:hidden;transition:box-shadow 0.2s}
+  .club-card:hover{box-shadow:0 4px 18px rgba(22,32,64,0.12)}
+  .club-card-banner{height:6px}
+  .club-card-body{padding:16px}
+  .club-card-body h3{font-size:15px;font-weight:700;color:#162040}
+  .club-card-body .category{font-size:11px;color:#2774AE;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .club-card-body p{font-size:13px;color:#555;line-height:1.5;margin:8px 0}
+  .club-card-footer{border-top:1px solid #f0ede8;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:#fafaf8}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;padding:10px 14px;background:#f5f3ee;color:#555;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid #e0ddd6}
+  td{padding:11px 14px;border-bottom:1px solid #f0ede8;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#fafaf8}
+  .avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:1000}
+  .modal{background:#fff;border-radius:14px;width:90%;max-width:600px;max-height:85vh;overflow-y:auto;padding:28px}
+  .modal h2{font-size:20px;margin-bottom:16px;color:#162040}
+  .form-group{margin-bottom:16px}
+  .form-group label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:5px}
+  .tag{display:inline-block;background:#e8f0f8;color:#2774AE;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600;margin:2px}
+  .top-bar{background:#162040;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+  .top-bar-title{font-size:13px;color:#8b9bb4}
+  .top-bar-user{display:flex;align-items:center;gap:10px;font-size:13px}
+  .welcome-screen{min-height:100vh;background:linear-gradient(135deg,#162040 0%,#2774AE 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+  .welcome-card{background:#fff;border-radius:16px;padding:36px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+  .welcome-logo{text-align:center;margin-bottom:28px}
+  .welcome-logo h1{font-size:32px;color:#162040;letter-spacing:2px}
+  .welcome-logo .sub{font-size:13px;color:#2774AE;font-weight:600;letter-spacing:1px;margin-top:2px}
+  .role-tabs{display:flex;gap:8px;margin-bottom:20px}
+  .role-tab{flex:1;padding:10px;text-align:center;border-radius:8px;border:2px solid #e0ddd6;cursor:pointer;font-size:13px;font-weight:600;color:#666;transition:all 0.15s}
+  .role-tab.active{border-color:#2774AE;background:#e8f0f8;color:#2774AE}
+  .error-msg{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;padding:10px;border-radius:6px;font-size:13px;margin-bottom:12px}
+  .app-row{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #e0ddd6;border-radius:10px;margin-bottom:10px;background:#fff}
+  .divider{border:none;border-top:1px solid #e8e4de;margin:20px 0}
+  textarea{resize:vertical;min-height:80px}
+  .empty-state{text-align:center;padding:48px 20px;color:#888}
+  .empty-state .icon{font-size:40px;margin-bottom:12px}
+  .empty-state p{font-size:14px}
+  select option{font-size:14px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const {useState,useEffect,useRef}=React;
+const h=React.createElement;
+
+const COLORS=['#2774AE','#FFD100','#8B4513','#1B5E20','#6A1B9A','#BF360C','#006064'];
+const CATEGORIES=['Academic','Arts & Culture','Community Service','Greek Life','Political','Pre-Professional','STEM','Sports & Recreation','Social Justice','Religious & Spiritual'];
+
+const CLUBS=[
+  {id:1,name:'Bruin Entrepreneurs',category:'Pre-Professional',desc:'Connect with LA\'s startup ecosystem, pitch competitions, and mentorship from UCLA alumni founders.',open:true,deadline:'2025-05-10',color:COLORS[0],questions:['Why are you interested in entrepreneurship?','Describe a project you\'ve built or led.','What do you hope to contribute to our community?']},
+  {id:2,name:'UCLA Debate Union',category:'Academic',desc:'Competitive parliamentary and policy debate team representing UCLA at national tournaments.',open:true,deadline:'2025-05-15',color:COLORS[3],questions:['What debate experience do you have?','Describe a time you changed someone\'s mind.','What resolution topic excites you most?']},
+  {id:3,name:'Bruin AI Society',category:'STEM',desc:'Hands-on machine learning projects, research reading groups, and industry speaker panels.',open:true,deadline:'2025-05-20',color:COLORS[4],questions:['What ML experience do you have?','Describe a technical project you\'re proud of.','What area of AI interests you most and why?']},
+  {id:4,name:'Community Living Project',category:'Community Service',desc:'Weekly volunteering in underserved LA neighborhoods focused on housing and food security.',open:false,deadline:'2025-04-01',color:COLORS[5],questions:['Why is community service important to you?','Describe a meaningful volunteer experience.']},
+  {id:5,name:'Bruin Film Collective',category:'Arts & Culture',desc:'Student-run film production club — from screenwriting workshops to short film festivals.',open:true,deadline:'2025-05-25',color:COLORS[6],questions:['What role in filmmaking excites you?','Share a film that inspired you.','Describe any creative project you\'ve made.']},
+  {id:6,name:'Sunrise Movement UCLA',category:'Social Justice',desc:'Climate justice organizing, political campaigns, and direct action on the UCLA campus.',open:true,deadline:'2025-05-30',color:COLORS[2],questions:['Why is climate justice important to you?','Describe your organizing or advocacy experience.','What campaign would you want to run?']},
+];
+
+const APPLICANTS=[
+  {id:1,name:'Maya Chen',email:'mayachen@g.ucla.edu',year:'2nd Year',major:'Computer Science'},
+  {id:2,name:'Jordan Davis',email:'jdavis@g.ucla.edu',year:'1st Year',major:'Political Science'},
+  {id:3,name:'Aisha Patel',email:'apatel@g.ucla.edu',year:'3rd Year',major:'Economics'},
+  {id:4,name:'Marcus Wong',email:'mwong@g.ucla.edu',year:'2nd Year',major:'Film Studies'},
+  {id:5,name:'Sofia Reyes',email:'sreyes@g.ucla.edu',year:'1st Year',major:'Environmental Science'},
+];
+
+const INIT_APPS=[
+  {id:1,clubId:1,applicantId:1,status:'pending',submitted:'2025-04-28',answers:['I\'ve been building apps since high school and want to connect with LA founders.','Built a meal planning SaaS with 200 users.','I can lead our pitch competition team.']},
+  {id:2,clubId:2,applicantId:2,status:'accepted',submitted:'2025-04-25',answers:['3 years policy debate in high school, 2 state qualifications.','Convinced my debate partner to switch sides on immigration reform mid-season.','Excited about AI regulation resolutions.']},
+  {id:3,clubId:3,applicantId:1,status:'pending',submitted:'2025-04-30',answers:['Completed fast.ai course, built image classifier.','Built a sentiment analysis tool for Reddit posts.','Reinforcement learning — especially robotics applications.']},
+  {id:4,clubId:1,applicantId:3,status:'rejected',submitted:'2025-04-20',answers:['I want to transition from economics into tech startups.','Led a consulting team that advised 3 startups.','Bring financial modeling and market sizing skills.']},
+  {id:5,clubId:5,applicantId:4,status:'waitlisted',submitted:'2025-04-22',answers:['Directing and cinematography.','Moonlight — the visual storytelling is unmatched.','Shot a 10-minute short film about LA\'s homeless community.']},
+  {id:6,clubId:6,applicantId:5,status:'pending',submitted:'2025-05-01',answers:['The climate crisis will define our generation.','Organized a campus sustainability petition with 800 signatures.','A tuition-free green energy major at UCLA.']},
+];
+
+const LEADERS=[
+  {id:'L1',name:'Priya Sharma',email:'leader@bruinentrepreneurs.com',clubId:1},
+  {id:'L2',name:'Tyler Kim',email:'leader@ucladebate.com',clubId:2},
+  {id:'L3',name:'Zoe Nguyen',email:'leader@bruinai.com',clubId:3},
+];
+
+const USERS=[
+  {id:'admin',email:'zach@admin.bruinapp.com',password:'admin123',role:'admin',name:'Zach'},
+  {id:'L1',email:'leader@bruinentrepreneurs.com',password:'leader123',role:'leader',name:'Priya Sharma',clubId:1},
+  {id:'L2',email:'leader@ucladebate.com',password:'leader123',role:'leader',name:'Tyler Kim',clubId:2},
+  {id:'L3',email:'leader@bruinai.com',password:'leader123',role:'leader',name:'Zoe Nguyen',clubId:3},
+  {id:'A1',email:'mayachen@g.ucla.edu',password:'student123',role:'applicant',name:'Maya Chen',applicantId:1},
+  {id:'A2',email:'jdavis@g.ucla.edu',password:'student123',role:'applicant',name:'Jordan Davis',applicantId:2},
+];
+
+function getInitials(name){return name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}
+function getAvatarColor(name){const i=name.charCodeAt(0)%COLORS.length;return COLORS[i]}
+function fmtDate(d){return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+
+function App(){
+  const [user,setUser]=useState(null);
+  const [clubs,setClubs]=useState(CLUBS);
+  const [applications,setApplications]=useState(INIT_APPS);
+  const [page,setPage]=useState('dashboard');
+  const [modal,setModal]=useState(null);
+
+  if(!user)return h(LoginScreen,{onLogin:setUser});
+
+  const ctx={user,clubs,setClubs,applications,setApplications,page,setPage,modal,setModal,setUser};
+
+  if(user.role==='admin')return h(AdminApp,ctx);
+  if(user.role==='leader')return h(LeaderApp,ctx);
+  return h(ApplicantApp,ctx);
+}
+
+// ─── LOGIN ───────────────────────────────────────────────
+function LoginScreen({onLogin}){
+  const [tab,setTab]=useState('applicant');
+  const [email,setEmail]=useState('');
+  const [password,setPassword]=useState('');
+  const [regEmail,setRegEmail]=useState('');
+  const [regName,setRegName]=useState('');
+  const [regPassword,setRegPassword]=useState('');
+  const [error,setError]=useState('');
+  const [mode,setMode]=useState('login');
+
+  function handleLogin(){
+    setError('');
+    const u=USERS.find(u=>u.email===email&&u.password===password);
+    if(!u){setError('Invalid email or password.');return;}
+    if(tab==='applicant'&&u.role!=='applicant'){setError('This account is not a student account.');return;}
+    if(tab==='leader'&&u.role!=='leader'){setError('This account is not a club leader account.');return;}
+    if(tab==='admin'&&u.role!=='admin'){setError('Admin credentials required.');return;}
+    onLogin(u);
+  }
+
+  function handleRegister(){
+    setError('');
+    if(!regName){setError('Name required.');return;}
+    if(!regEmail.endsWith('@g.ucla.edu')){setError('UCLA student email (@g.ucla.edu) required.');return;}
+    if(regPassword.length<6){setError('Password must be at least 6 characters.');return;}
+    const existing=USERS.find(u=>u.email===regEmail);
+    if(existing){setError('An account with this email already exists.');return;}
+    const newUser={id:'A'+Date.now(),email:regEmail,password:regPassword,role:'applicant',name:regName,applicantId:Date.now()};
+    USERS.push(newUser);
+    onLogin(newUser);
+  }
+
+  const demos={applicant:'mayachen@g.ucla.edu / student123',leader:'leader@bruinentrepreneurs.com / leader123',admin:'zach@admin.bruinapp.com / admin123'};
+
+  return h('div',{className:'welcome-screen'},
+    h('div',{className:'welcome-card'},
+      h('div',{className:'welcome-logo'},
+        h('h1',null,'BruinApp'),
+        h('div',{className:'sub'},'UCLA CLUB APPLICATIONS'),
+        h('div',{style:{width:40,height:3,background:'#FFD100',margin:'8px auto 0',borderRadius:2}})
+      ),
+      h('div',{className:'role-tabs'},
+        ['applicant','leader','admin'].map(r=>
+          h('div',{key:r,className:'role-tab'+(tab===r?' active':''),onClick:()=>{setTab(r);setError('');setMode('login')}},
+            {applicant:'Student',leader:'Club Leader',admin:'Admin'}[r]
+          )
+        )
+      ),
+      tab==='applicant'&&mode==='register'
+        ? h('div',null,
+            h('div',{className:'form-group'},h('label',null,'Full Name'),h('input',{value:regName,onChange:e=>setRegName(e.target.value),placeholder:'Your full name'})),
+            h('div',{className:'form-group'},h('label',null,'UCLA Email'),h('input',{value:regEmail,onChange:e=>setRegEmail(e.target.value),placeholder:'yourname@g.ucla.edu'})),
+            h('div',{className:'form-group'},h('label',null,'Password'),h('input',{type:'password',value:regPassword,onChange:e=>setRegPassword(e.target.value),placeholder:'Choose a password'})),
+            error&&h('div',{className:'error-msg'},error),
+            h('button',{className:'btn-primary',style:{width:'100%',marginBottom:10},onClick:handleRegister},'Create Account'),
+            h('button',{className:'btn-ghost',style:{width:'100%'},onClick:()=>{setMode('login');setError('')}},'Already have an account? Sign in')
+          )
+        : h('div',null,
+            h('div',{className:'form-group'},h('label',null,'Email'),h('input',{value:email,onChange:e=>setEmail(e.target.value),placeholder:tab==='admin'?'Admin email':tab==='leader'?'Club leader email':'yourname@g.ucla.edu',onKeyDown:e=>e.key==='Enter'&&handleLogin()})),
+            h('div',{className:'form-group'},h('label',null,'Password'),h('input',{type:'password',value:password,onChange:e=>setPassword(e.target.value),onKeyDown:e=>e.key==='Enter'&&handleLogin()})),
+            error&&h('div',{className:'error-msg'},error),
+            h('button',{className:'btn-primary',style:{width:'100%',marginBottom:10},onClick:handleLogin},'Sign In'),
+            tab==='applicant'&&h('button',{className:'btn-ghost',style:{width:'100%'},onClick:()=>{setMode('register');setError('')}},'New student? Create account'),
+            h('div',{style:{marginTop:14,padding:'10px',background:'#f5f3ee',borderRadius:8,fontSize:12,color:'#666'}},
+              h('strong',null,'Demo: '),demos[tab]
+            )
+          )
+    )
+  );
+}
+
+// ─── SHELL ───────────────────────────────────────────────
+function Shell({user,navItems,page,setPage,setUser,children}){
+  return h('div',{style:{display:'flex',minHeight:'100vh'}},
+    h('div',{className:'sidebar'},
+      h('div',{className:'sidebar-logo'},
+        h('h2',null,'BruinApp'),
+        h('p',null,user.role==='admin'?'Admin Console':user.role==='leader'?'Club Leader':'Student Portal')
+      ),
+      h('nav',{className:'sidebar-nav'},
+        navItems.map(({id,label,icon})=>
+          h('div',{key:id,className:'nav-item'+(page===id?' active':''),onClick:()=>setPage(id)},
+            h('span',{style:{fontSize:16}},icon),h('span',null,label)
+          )
+        )
+      ),
+      h('div',{style:{padding:'16px 20px',borderTop:'1px solid rgba(255,255,255,0.1)'}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+          h('div',{className:'avatar',style:{background:getAvatarColor(user.name),width:30,height:30,fontSize:11}},getInitials(user.name)),
+          h('div',null,
+            h('div',{style:{fontSize:12,color:'#fff',fontWeight:600}},user.name),
+            h('div',{style:{fontSize:10,color:'#8b9bb4'}},user.email.length>22?user.email.slice(0,22)+'…':user.email)
+          )
+        ),
+        h('button',{onClick:()=>setUser(null),style:{marginTop:10,width:'100%',background:'rgba(255,255,255,0.1)',color:'#b0bdcc',border:'none',borderRadius:6,padding:'6px',fontSize:12,cursor:'pointer'}},'Sign Out')
+      )
+    ),
+    h('div',{style:{flex:1,display:'flex',flexDirection:'column'}},children)
+  );
+}
+
+// ─── APPLICANT APP ────────────────────────────────────────
+function ApplicantApp({user,clubs,applications,setApplications,page,setPage,modal,setModal,setUser}){
+  const myApps=applications.filter(a=>a.applicantId===user.applicantId);
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:'🏠'},
+    {id:'browse',label:'Browse Clubs',icon:'🔍'},
+    {id:'myapps',label:'My Applications',icon:'📋'},
+  ];
+  return h(Shell,{user,navItems:nav,page,setPage,setUser},
+    h('div',{className:'main-content'},
+      page==='dashboard'&&h(ApplicantDashboard,{user,clubs,myApps,setPage,setModal,modal,applications,setApplications}),
+      page==='browse'&&h(BrowseClubs,{clubs,myApps,setModal,modal,applications,setApplications,user}),
+      page==='myapps'&&h(MyApplications,{myApps,clubs}),
+      modal&&h(ApplicationModal,{modal,setModal,applications,setApplications,user})
+    )
+  );
+}
+
+function ApplicantDashboard({user,clubs,myApps,setPage,setModal,modal,applications,setApplications}){
+  const open=clubs.filter(c=>c.open);
+  const pending=myApps.filter(a=>a.status==='pending').length;
+  const accepted=myApps.filter(a=>a.status==='accepted').length;
+  return h('div',null,
+    h('div',{className:'page-header'},
+      h('h1',null,'Welcome back, '+user.name.split(' ')[0]+' 👋'),
+      h('p',null,'Here\'s your BruinApp overview for this cycle.')
+    ),
+    h('div',{className:'stat-grid'},
+      h('div',{className:'stat-card'},h('div',{className:'num'},myApps.length),h('div',{className:'lbl'},'Applications Submitted')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#f59e0b'}},pending),h('div',{className:'lbl'},'Under Review')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#16a34a'}},accepted),h('div',{className:'lbl'},'Accepted')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},open.length),h('div',{className:'lbl'},'Clubs Open'))
+    ),
+    h('h2',{style:{fontSize:16,fontWeight:700,marginBottom:12,color:'#162040'}},'Open Clubs'),
+    h('div',{className:'club-grid'},
+      open.slice(0,3).map(club=>{
+        const applied=applications.find(a=>a.clubId===club.id&&a.applicantId===user.applicantId);
+        return h('div',{key:club.id,className:'club-card'},
+          h('div',{className:'club-card-banner',style:{background:club.color}}),
+          h('div',{className:'club-card-body'},
+            h('div',{className:'category'},club.category),
+            h('h3',null,club.name),
+            h('p',null,club.desc.slice(0,80)+'…')
+          ),
+          h('div',{className:'club-card-footer'},
+            h('span',{style:{fontSize:12,color:'#888'}},'Due '+fmtDate(club.deadline)),
+            applied
+              ? h('span',{className:'badge badge-pending'},'Applied')
+              : h('button',{className:'btn-primary btn-sm',onClick:()=>setModal({type:'apply',club})},'+Apply')
+          )
+        );
+      }),
+      h('div',{className:'club-card',style:{display:'flex',alignItems:'center',justifyContent:'center',minHeight:120,cursor:'pointer',border:'2px dashed #ccc',boxShadow:'none'},onClick:()=>setPage('browse')},
+        h('div',{style:{textAlign:'center',color:'#aaa'}},h('div',{style:{fontSize:24}},'→'),h('div',{style:{fontSize:13,marginTop:4}},'See all clubs'))
+      )
+    )
+  );
+}
+
+function BrowseClubs({clubs,myApps,setModal,applications,setApplications,user}){
+  const [filter,setFilter]=useState('All');
+  const [search,setSearch]=useState('');
+  const filtered=clubs.filter(c=>{
+    const catOk=filter==='All'||c.category===filter;
+    const searchOk=c.name.toLowerCase().includes(search.toLowerCase())||c.desc.toLowerCase().includes(search.toLowerCase());
+    return catOk&&searchOk;
+  });
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Browse Clubs'),h('p',null,clubs.length+' clubs listed this cycle')),
+    h('div',{style:{display:'flex',gap:10,marginBottom:20}},
+      h('input',{placeholder:'Search clubs…',value:search,onChange:e=>setSearch(e.target.value),style:{maxWidth:280}}),
+      h('select',{value:filter,onChange:e=>setFilter(e.target.value),style:{maxWidth:180}},
+        h('option',null,'All'),
+        CATEGORIES.map(c=>h('option',{key:c},c))
+      )
+    ),
+    h('div',{className:'club-grid'},
+      filtered.map(club=>{
+        const applied=applications.find(a=>a.clubId===club.id&&a.applicantId===user.applicantId);
+        return h('div',{key:club.id,className:'club-card'},
+          h('div',{className:'club-card-banner',style:{background:club.color}}),
+          h('div',{className:'club-card-body'},
+            h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
+              h('div',{className:'category'},club.category),
+              h('span',{className:'badge '+(club.open?'badge-open':'badge-closed')},club.open?'Open':'Closed')
+            ),
+            h('h3',{style:{marginTop:4}},club.name),
+            h('p',null,club.desc)
+          ),
+          h('div',{className:'club-card-footer'},
+            h('span',{style:{fontSize:12,color:'#888'}},club.open?'Due '+fmtDate(club.deadline):'Applications closed'),
+            applied
+              ? h('span',{className:'badge badge-pending'},'Applied')
+              : club.open
+                ? h('button',{className:'btn-primary btn-sm',onClick:()=>setModal({type:'apply',club})},'+Apply')
+                : h('button',{className:'btn-sm',style:{background:'#f0ede8',color:'#aaa',cursor:'not-allowed'}},disabled,true,'Closed')
+          )
+        );
+      })
+    ),
+    filtered.length===0&&h('div',{className:'empty-state'},h('div',{className:'icon'},'🔍'),h('p',null,'No clubs match your search.'))
+  );
+}
+
+function MyApplications({myApps,clubs}){
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'My Applications'),h('p',null,'Track the status of all your submissions.')),
+    myApps.length===0
+      ? h('div',{className:'empty-state'},h('div',{className:'icon'},'📋'),h('p',null,'You haven\'t applied to any clubs yet.'))
+      : myApps.map(app=>{
+          const club=clubs.find(c=>c.id===app.clubId);
+          if(!club)return null;
+          const statusClass={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted'};
+          return h('div',{key:app.id,className:'app-row'},
+            h('div',{style:{width:8,height:8,borderRadius:'50%',background:club.color,flexShrink:0}}),
+            h('div',{style:{flex:1}},
+              h('div',{style:{fontWeight:700,fontSize:14}},club.name),
+              h('div',{style:{fontSize:12,color:'#888'}},club.category+' · Submitted '+fmtDate(app.submitted))
+            ),
+            h('span',{className:'badge '+statusClass[app.status]},app.status.charAt(0).toUpperCase()+app.status.slice(1))
+          );
+        })
+  );
+}
+
+function ApplicationModal({modal,setModal,applications,setApplications,user}){
+  const club=modal.club;
+  const [answers,setAnswers]=useState(club.questions.map(()=>''));
+  const [submitted,setSubmitted]=useState(false);
+
+  function submit(){
+    if(answers.some(a=>!a.trim())){alert('Please answer all questions.');return;}
+    const newApp={
+      id:Date.now(),clubId:club.id,
+      applicantId:user.applicantId||user.id,
+      status:'pending',
+      submitted:new Date().toISOString().split('T')[0],
+      answers
+    };
+    setApplications(prev=>[...prev,newApp]);
+    setSubmitted(true);
+  }
+
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      submitted
+        ? h('div',{style:{textAlign:'center',padding:'20px 0'}},
+            h('div',{style:{fontSize:48,marginBottom:12}},'✅'),
+            h('h2',null,'Application Submitted!'),
+            h('p',{style:{color:'#666',marginTop:8}},'You\'ll be notified when the club reviews your application.'),
+            h('button',{className:'btn-primary',style:{marginTop:20},onClick:()=>setModal(null)},'Done')
+          )
+        : h('div',null,
+            h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}},
+              h('div',null,
+                h('h2',null,'Apply to '+club.name),
+                h('span',{className:'tag'},club.category)
+              ),
+              h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#999'}},'×')
+            ),
+            h('hr',{className:'divider'}),
+            club.questions.map((q,i)=>
+              h('div',{key:i,className:'form-group'},
+                h('label',null,(i+1)+'. '+q),
+                h('textarea',{value:answers[i],onChange:e=>{const a=[...answers];a[i]=e.target.value;setAnswers(a)},placeholder:'Your answer…',rows:3})
+              )
+            ),
+            h('div',{style:{display:'flex',gap:10,justifyContent:'flex-end',marginTop:8}},
+              h('button',{className:'btn-ghost',onClick:()=>setModal(null)},'Cancel'),
+              h('button',{className:'btn-primary',onClick:submit},'Submit Application')
+            )
+          )
+    )
+  );
+}
+
+// ─── LEADER APP ───────────────────────────────────────────
+function LeaderApp({user,clubs,setClubs,applications,setApplications,page,setPage,modal,setModal,setUser}){
+  const myClub=clubs.find(c=>c.id===user.clubId);
+  const myApps=applications.filter(a=>a.clubId===user.clubId);
+  const nav=[
+    {id:'dashboard',label:'Dashboard',icon:'🏠'},
+    {id:'applicants',label:'Applicants',icon:'👥'},
+    {id:'club-settings',label:'Club Settings',icon:'⚙️'},
+  ];
+  return h(Shell,{user,navItems:nav,page,setPage,setUser},
+    h('div',{className:'main-content'},
+      page==='dashboard'&&h(LeaderDashboard,{myClub,myApps,setPage}),
+      page==='applicants'&&h(LeaderApplicants,{myApps,applications,setApplications,modal,setModal}),
+      page==='club-settings'&&h(ClubSettings,{myClub,clubs,setClubs}),
+      modal&&modal.type==='review'&&h(ReviewModal,{modal,setModal,applications,setApplications})
+    )
+  );
+}
+
+function LeaderDashboard({myClub,myApps,setPage}){
+  if(!myClub)return h('div',null,'No club assigned.');
+  const counts={pending:0,accepted:0,rejected:0,waitlisted:0};
+  myApps.forEach(a=>counts[a.status]=(counts[a.status]||0)+1);
+  return h('div',null,
+    h('div',{className:'page-header'},
+      h('h1',null,myClub.name),
+      h('p',null,myClub.category+' · Applications: '+(myClub.open?'Open':'Closed'))
+    ),
+    h('div',{className:'stat-grid'},
+      h('div',{className:'stat-card'},h('div',{className:'num'},myApps.length),h('div',{className:'lbl'},'Total Applications')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#f59e0b'}},counts.pending||0),h('div',{className:'lbl'},'Pending Review')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#16a34a'}},counts.accepted||0),h('div',{className:'lbl'},'Accepted')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#dc2626'}},counts.rejected||0),h('div',{className:'lbl'},'Rejected'))
+    ),
+    h('div',{className:'card'},
+      h('h3',{style:{marginBottom:12,fontSize:15}},myClub.desc),
+      h('div',{style:{fontSize:13,color:'#666',marginBottom:4}},'Application deadline: '+fmtDate(myClub.deadline)),
+      h('div',{style:{fontSize:13,color:'#666'}},'Questions: '+myClub.questions.length),
+      h('button',{className:'btn-primary',style:{marginTop:14},onClick:()=>setPage('applicants')},'Review Applicants →')
+    )
+  );
+}
+
+function LeaderApplicants({myApps,applications,setApplications,modal,setModal}){
+  const [filter,setFilter]=useState('all');
+  const filtered=filter==='all'?myApps:myApps.filter(a=>a.status===filter);
+
+  function decide(appId,status){
+    setApplications(prev=>prev.map(a=>a.id===appId?{...a,status}:a));
+  }
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Applicants'),h('p',null,myApps.length+' total submissions')),
+    h('div',{style:{display:'flex',gap:8,marginBottom:18}},
+      ['all','pending','accepted','waitlisted','rejected'].map(s=>
+        h('button',{key:s,onClick:()=>setFilter(s),style:{padding:'6px 14px',borderRadius:20,border:'1px solid #ccc',background:filter===s?'#2774AE':'#fff',color:filter===s?'#fff':'#555',cursor:'pointer',fontSize:12,fontWeight:600}},
+          s.charAt(0).toUpperCase()+s.slice(1))
+      )
+    ),
+    filtered.length===0
+      ? h('div',{className:'empty-state'},h('div',{className:'icon'},'👥'),h('p',null,'No applicants in this category.'))
+      : h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+          h('table',null,
+            h('thead',null,h('tr',null,h('th',null,'Applicant'),h('th',null,'Submitted'),h('th',null,'Status'),h('th',null,'Actions'))),
+            h('tbody',null,
+              filtered.map(app=>{
+                const ap=APPLICANTS.find(a=>a.id===app.applicantId)||{name:'Unknown Applicant',email:'',year:'',major:''};
+                const statusClass={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted'};
+                return h('tr',{key:app.id},
+                  h('td',null,
+                    h('div',{style:{display:'flex',alignItems:'center',gap:8}},
+                      h('div',{className:'avatar',style:{background:getAvatarColor(ap.name)}},getInitials(ap.name)),
+                      h('div',null,
+                        h('div',{style:{fontWeight:600,fontSize:13}},ap.name),
+                        h('div',{style:{fontSize:11,color:'#888'}},ap.major+' · '+ap.year)
+                      )
+                    )
+                  ),
+                  h('td',{style:{color:'#666',fontSize:12}},fmtDate(app.submitted)),
+                  h('td',null,h('span',{className:'badge '+statusClass[app.status]},app.status.charAt(0).toUpperCase()+app.status.slice(1))),
+                  h('td',null,
+                    h('div',{style:{display:'flex',gap:6}},
+                      h('button',{className:'btn-ghost btn-sm',onClick:()=>setModal({type:'review',app,applicant:ap})},'Review'),
+                      app.status!=='accepted'&&h('button',{className:'btn-sm',style:{background:'#d4edda',color:'#155724',border:'none'},onClick:()=>decide(app.id,'accepted')},'Accept'),
+                      app.status!=='rejected'&&h('button',{className:'btn-sm',style:{background:'#f8d7da',color:'#721c24',border:'none'},onClick:()=>decide(app.id,'rejected')},'Reject'),
+                      app.status!=='waitlisted'&&h('button',{className:'btn-sm',style:{background:'#e2e3e5',color:'#383d41',border:'none'},onClick:()=>decide(app.id,'waitlisted')},'Waitlist')
+                    )
+                  )
+                );
+              })
+            )
+          )
+        )
+  );
+}
+
+function ReviewModal({modal,setModal,applications,setApplications}){
+  const {app,applicant}=modal;
+  const club=CLUBS.find(c=>c.id===app.clubId);
+
+  function decide(status){
+    setApplications(prev=>prev.map(a=>a.id===app.id?{...a,status}:a));
+    setModal(null);
+  }
+
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
+        h('h2',null,applicant.name),
+        h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#999'}},'×')
+      ),
+      h('div',{style:{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}},
+        h('span',{className:'tag'},applicant.email),
+        h('span',{className:'tag'},applicant.major),
+        h('span',{className:'tag'},applicant.year)
+      ),
+      h('hr',{className:'divider'}),
+      club&&club.questions.map((q,i)=>
+        h('div',{key:i,style:{marginBottom:16}},
+          h('div',{style:{fontWeight:600,fontSize:13,color:'#162040',marginBottom:4}},q),
+          h('div',{style:{fontSize:13,color:'#444',lineHeight:1.6,background:'#f5f3ee',padding:'10px',borderRadius:8}},app.answers[i]||'(no answer)')
+        )
+      ),
+      h('hr',{className:'divider'}),
+      h('div',{style:{display:'flex',gap:8,justifyContent:'flex-end'}},
+        h('button',{className:'btn-sm',style:{background:'#d4edda',color:'#155724',border:'none',padding:'8px 18px'},onClick:()=>decide('accepted')},'✓ Accept'),
+        h('button',{className:'btn-sm',style:{background:'#e2e3e5',color:'#383d41',border:'none',padding:'8px 18px'},onClick:()=>decide('waitlisted')},'Waitlist'),
+        h('button',{className:'btn-danger btn-sm',onClick:()=>decide('rejected')},'✕ Reject')
+      )
+    )
+  );
+}
+
+function ClubSettings({myClub,clubs,setClubs}){
+  const [club,setClub]=useState({...myClub});
+  const [saved,setSaved]=useState(false);
+  if(!club)return null;
+
+  function save(){
+    setClubs(prev=>prev.map(c=>c.id===club.id?club:c));
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  }
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Club Settings'),h('p',null,'Update your club listing and application.')),
+    h('div',{className:'card'},
+      h('div',{className:'form-group'},h('label',null,'Club Name'),h('input',{value:club.name,onChange:e=>setClub({...club,name:e.target.value})})),
+      h('div',{className:'form-group'},h('label',null,'Category'),
+        h('select',{value:club.category,onChange:e=>setClub({...club,category:e.target.value})},
+          CATEGORIES.map(c=>h('option',{key:c},c))
+        )
+      ),
+      h('div',{className:'form-group'},h('label',null,'Description'),h('textarea',{value:club.desc,onChange:e=>setClub({...club,desc:e.target.value}),rows:3})),
+      h('div',{className:'form-group'},h('label',null,'Application Deadline'),h('input',{type:'date',value:club.deadline,onChange:e=>setClub({...club,deadline:e.target.value})})),
+      h('div',{className:'form-group'},
+        h('label',null,'Application Status'),
+        h('div',{style:{display:'flex',gap:10,marginTop:6}},
+          h('label',{style:{display:'flex',alignItems:'center',gap:6,cursor:'pointer'}},
+            h('input',{type:'radio',name:'status',checked:club.open,onChange:()=>setClub({...club,open:true})}),'Open'
+          ),
+          h('label',{style:{display:'flex',alignItems:'center',gap:6,cursor:'pointer'}},
+            h('input',{type:'radio',name:'status',checked:!club.open,onChange:()=>setClub({...club,open:false})}),'Closed'
+          )
+        )
+      ),
+      h('hr',{className:'divider'}),
+      h('div',{style:{marginBottom:8,fontWeight:600,fontSize:13}},h('label',null,'Application Questions')),
+      club.questions.map((q,i)=>
+        h('div',{key:i,style:{display:'flex',gap:8,marginBottom:8}},
+          h('input',{value:q,onChange:e=>{const qs=[...club.questions];qs[i]=e.target.value;setClub({...club,questions:qs})},placeholder:'Question '+(i+1)}),
+          club.questions.length>1&&h('button',{onClick:()=>setClub({...club,questions:club.questions.filter((_,j)=>j!==i)}),style:{background:'#fee2e2',color:'#dc2626',border:'none',borderRadius:6,padding:'0 10px',cursor:'pointer'}},'×')
+        )
+      ),
+      h('button',{onClick:()=>setClub({...club,questions:[...club.questions,'']}),className:'btn-ghost btn-sm',style:{marginBottom:16}},'+Add Question'),
+      h('button',{className:'btn-primary',onClick:save},saved?'✓ Saved!':'Save Changes')
+    )
+  );
+}
+
+// ─── ADMIN APP ────────────────────────────────────────────
+function AdminApp({user,clubs,setClubs,applications,setApplications,page,setPage,modal,setModal,setUser}){
+  const nav=[
+    {id:'dashboard',label:'Overview',icon:'📊'},
+    {id:'clubs',label:'Manage Clubs',icon:'🏛️'},
+    {id:'users',label:'Users',icon:'👤'},
+    {id:'applications',label:'All Applications',icon:'📋'},
+  ];
+  return h(Shell,{user,navItems:nav,page,setPage,setUser},
+    h('div',{className:'main-content'},
+      page==='dashboard'&&h(AdminDashboard,{clubs,applications}),
+      page==='clubs'&&h(AdminClubs,{clubs,setClubs,modal,setModal}),
+      page==='users'&&h(AdminUsers,{}),
+      page==='applications'&&h(AdminApplications,{applications,setApplications,clubs}),
+      modal&&modal.type==='new-club'&&h(NewClubModal,{setModal,setClubs,clubs})
+    )
+  );
+}
+
+function AdminDashboard({clubs,applications}){
+  const openClubs=clubs.filter(c=>c.open).length;
+  const pending=applications.filter(a=>a.status==='pending').length;
+  const accepted=applications.filter(a=>a.status==='accepted').length;
+  const catCounts={};
+  clubs.forEach(c=>catCounts[c.category]=(catCounts[c.category]||0)+1);
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Admin Overview'),h('p',null,'Full platform metrics for this application cycle.')),
+    h('div',{className:'stat-grid'},
+      h('div',{className:'stat-card'},h('div',{className:'num'},clubs.length),h('div',{className:'lbl'},'Total Clubs')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},openClubs),h('div',{className:'lbl'},'Open for Apps')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},applications.length),h('div',{className:'lbl'},'Total Applications')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#f59e0b'}},pending),h('div',{className:'lbl'},'Pending')),
+      h('div',{className:'stat-card'},h('div',{className:'num',style:{color:'#16a34a'}},accepted),h('div',{className:'lbl'},'Accepted')),
+      h('div',{className:'stat-card'},h('div',{className:'num'},USERS.filter(u=>u.role==='applicant').length),h('div',{className:'lbl'},'Student Users'))
+    ),
+    h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginTop:8}},
+      h('div',{className:'card'},
+        h('h3',{style:{fontSize:14,fontWeight:700,marginBottom:12}},h('span',null,'Clubs by Category')),
+        Object.entries(catCounts).map(([cat,count])=>
+          h('div',{key:cat,style:{display:'flex',justifyContent:'space-between',padding:'6px 0',borderBottom:'1px solid #f0ede8',fontSize:13}},
+            h('span',null,cat),h('span',{style:{fontWeight:700,color:'#2774AE'}},count)
+          )
+        )
+      ),
+      h('div',{className:'card'},
+        h('h3',{style:{fontSize:14,fontWeight:700,marginBottom:12}},'Application Status Breakdown'),
+        ['pending','accepted','rejected','waitlisted'].map(s=>{
+          const cnt=applications.filter(a=>a.status===s).length;
+          const pct=applications.length?Math.round(cnt/applications.length*100):0;
+          const colors={pending:'#f59e0b',accepted:'#16a34a',rejected:'#dc2626',waitlisted:'#6b7280'};
+          return h('div',{key:s,style:{marginBottom:10}},
+            h('div',{style:{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}},
+              h('span',null,s.charAt(0).toUpperCase()+s.slice(1)),h('span',null,cnt+' ('+pct+'%)')
+            ),
+            h('div',{style:{height:6,background:'#f0ede8',borderRadius:3,overflow:'hidden'}},
+              h('div',{style:{height:'100%',width:pct+'%',background:colors[s],borderRadius:3}})
+            )
+          );
+        })
+      )
+    )
+  );
+}
+
+function AdminClubs({clubs,setClubs,modal,setModal}){
+  function toggleOpen(id){setClubs(prev=>prev.map(c=>c.id===id?{...c,open:!c.open}:c));}
+  function deleteClub(id){if(confirm('Delete this club?'))setClubs(prev=>prev.filter(c=>c.id!==id));}
+
+  return h('div',null,
+    h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:24}},
+      h('div',{className:'page-header',style:{marginBottom:0}},h('h1',null,'Manage Clubs'),h('p',null,clubs.length+' clubs registered')),
+      h('button',{className:'btn-primary',onClick:()=>setModal({type:'new-club'})},'+Add Club')
+    ),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Club'),h('th',null,'Category'),h('th',null,'Status'),h('th',null,'Deadline'),h('th',null,'Actions'))),
+        h('tbody',null,
+          clubs.map(club=>
+            h('tr',{key:club.id},
+              h('td',null,h('div',{style:{fontWeight:600,fontSize:13}},club.name)),
+              h('td',null,h('span',{className:'tag'},club.category)),
+              h('td',null,h('span',{className:'badge '+(club.open?'badge-open':'badge-closed')},club.open?'Open':'Closed')),
+              h('td',{style:{fontSize:12,color:'#666'}},fmtDate(club.deadline)),
+              h('td',null,
+                h('div',{style:{display:'flex',gap:6}},
+                  h('button',{className:'btn-ghost btn-sm',onClick:()=>toggleOpen(club.id)},club.open?'Close':'Open'),
+                  h('button',{className:'btn-danger btn-sm',onClick:()=>deleteClub(club.id)},'Delete')
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    modal&&modal.type==='new-club'&&h(NewClubModal,{setModal,setClubs,clubs})
+  );
+}
+
+function NewClubModal({setModal,setClubs,clubs}){
+  const [form,setForm]=useState({name:'',category:CATEGORIES[0],desc:'',deadline:'',open:true,questions:['','','']});
+
+  function save(){
+    if(!form.name||!form.deadline||!form.desc){alert('Fill in all required fields.');return;}
+    const newClub={...form,id:Date.now(),color:COLORS[clubs.length%COLORS.length],questions:form.questions.filter(q=>q.trim())};
+    setClubs(prev=>[...prev,newClub]);
+    setModal(null);
+  }
+
+  return h('div',{className:'modal-overlay',onClick:e=>{if(e.target.className==='modal-overlay')setModal(null)}},
+    h('div',{className:'modal'},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center'}},
+        h('h2',null,'Add New Club'),
+        h('button',{onClick:()=>setModal(null),style:{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#999'}},'×')
+      ),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'Club Name *'),h('input',{value:form.name,onChange:e=>setForm({...form,name:e.target.value})})),
+        h('div',{className:'form-group'},h('label',null,'Category'),h('select',{value:form.category,onChange:e=>setForm({...form,category:e.target.value})},CATEGORIES.map(c=>h('option',{key:c},c))))
+      ),
+      h('div',{className:'form-group'},h('label',null,'Description *'),h('textarea',{value:form.desc,onChange:e=>setForm({...form,desc:e.target.value}),rows:2})),
+      h('div',{className:'two-col'},
+        h('div',{className:'form-group'},h('label',null,'Deadline *'),h('input',{type:'date',value:form.deadline,onChange:e=>setForm({...form,deadline:e.target.value})})),
+        h('div',{className:'form-group'},h('label',null,'Status'),
+          h('select',{value:form.open?'open':'closed',onChange:e=>setForm({...form,open:e.target.value==='open'})},
+            h('option',{value:'open'},'Open'),h('option',{value:'closed'},'Closed')
+          )
+        )
+      ),
+      h('div',{style:{fontWeight:600,fontSize:13,marginBottom:8}},'Application Questions'),
+      form.questions.map((q,i)=>
+        h('div',{key:i,className:'form-group'},
+          h('input',{value:q,onChange:e=>{const qs=[...form.questions];qs[i]=e.target.value;setForm({...form,questions:qs})},placeholder:'Question '+(i+1)})
+        )
+      ),
+      h('div',{style:{display:'flex',gap:10,justifyContent:'flex-end',marginTop:8}},
+        h('button',{className:'btn-ghost',onClick:()=>setModal(null)},'Cancel'),
+        h('button',{className:'btn-primary',onClick:save},'Create Club')
+      )
+    )
+  );
+}
+
+function AdminUsers(){
+  const students=USERS.filter(u=>u.role==='applicant');
+  const leaders=USERS.filter(u=>u.role==='leader');
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'Users'),h('p',null,'Manage all platform accounts')),
+    h('h3',{style:{fontSize:14,fontWeight:700,marginBottom:10}},'Club Leaders'),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden',marginBottom:20}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Leader'),h('th',null,'Email'),h('th',null,'Club'))),
+        h('tbody',null,
+          leaders.map(u=>
+            h('tr',{key:u.id},
+              h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(u.name)}},getInitials(u.name)),h('span',{style:{fontWeight:600,fontSize:13}},u.name))),
+              h('td',{style:{fontSize:12,color:'#666'}},u.email),
+              h('td',null,h('span',{className:'tag'},CLUBS.find(c=>c.id===u.clubId)?.name||'Unassigned'))
+            )
+          )
+        )
+      )
+    ),
+    h('h3',{style:{fontSize:14,fontWeight:700,marginBottom:10}},'Student Applicants'),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Student'),h('th',null,'Email'),h('th',null,'Year & Major'))),
+        h('tbody',null,
+          [...students,...APPLICANTS.filter(a=>!students.find(u=>u.email===a.email))].map((u,i)=>{
+            const ap=APPLICANTS.find(a=>a.email===u.email)||u;
+            return h('tr',{key:i},
+              h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(u.name)}},getInitials(u.name)),h('span',{style:{fontWeight:600,fontSize:13}},u.name))),
+              h('td',{style:{fontSize:12,color:'#666'}},u.email),
+              h('td',{style:{fontSize:12,color:'#666'}},(ap.year||'—')+' · '+(ap.major||'—'))
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+function AdminApplications({applications,setApplications,clubs}){
+  const [clubFilter,setClubFilter]=useState('all');
+  const [statusFilter,setStatusFilter]=useState('all');
+  const filtered=applications.filter(a=>{
+    const ck=clubFilter==='all'||a.clubId===parseInt(clubFilter);
+    const sk=statusFilter==='all'||a.status===statusFilter;
+    return ck&&sk;
+  });
+
+  function override(id,status){setApplications(prev=>prev.map(a=>a.id===id?{...a,status}:a));}
+
+  return h('div',null,
+    h('div',{className:'page-header'},h('h1',null,'All Applications'),h('p',null,applications.length+' submissions across all clubs')),
+    h('div',{style:{display:'flex',gap:10,marginBottom:16}},
+      h('select',{value:clubFilter,onChange:e=>setClubFilter(e.target.value),style:{maxWidth:200}},
+        h('option',{value:'all'},'All Clubs'),
+        clubs.map(c=>h('option',{key:c.id,value:c.id},c.name))
+      ),
+      h('select',{value:statusFilter,onChange:e=>setStatusFilter(e.target.value),style:{maxWidth:160}},
+        h('option',{value:'all'},'All Statuses'),
+        ['pending','accepted','rejected','waitlisted'].map(s=>h('option',{key:s,value:s},s.charAt(0).toUpperCase()+s.slice(1)))
+      )
+    ),
+    h('div',{className:'card',style:{padding:0,overflow:'hidden'}},
+      h('table',null,
+        h('thead',null,h('tr',null,h('th',null,'Applicant'),h('th',null,'Club'),h('th',null,'Submitted'),h('th',null,'Status'),h('th',null,'Override'))),
+        h('tbody',null,
+          filtered.map(app=>{
+            const ap=APPLICANTS.find(a=>a.id===app.applicantId)||{name:'Unknown',email:''};
+            const club=clubs.find(c=>c.id===app.clubId)||{name:'Unknown'};
+            const statusClass={'pending':'badge-pending','accepted':'badge-accepted','rejected':'badge-rejected','waitlisted':'badge-waitlisted'};
+            return h('tr',{key:app.id},
+              h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:8}},h('div',{className:'avatar',style:{background:getAvatarColor(ap.name),width:28,height:28,fontSize:10}},getInitials(ap.name)),h('div',null,h('div',{style:{fontWeight:600,fontSize:13}},ap.name),h('div',{style:{fontSize:11,color:'#888'}},ap.email)))),
+              h('td',{style:{fontSize:12}},club.name),
+              h('td',{style:{fontSize:12,color:'#666'}},fmtDate(app.submitted)),
+              h('td',null,h('span',{className:'badge '+statusClass[app.status]},app.status.charAt(0).toUpperCase()+app.status.slice(1))),
+              h('td',null,
+                h('select',{value:app.status,onChange:e=>override(app.id,e.target.value),style:{padding:'4px 8px',fontSize:12,width:'auto'}},
+                  ['pending','accepted','rejected','waitlisted'].map(s=>h('option',{key:s,value:s},s.charAt(0).toUpperCase()+s.slice(1)))
+                )
+              )
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(h(App));
+</script>
+</body>
+</html>
